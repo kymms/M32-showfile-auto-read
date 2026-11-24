@@ -1,0 +1,1 @@
+# M32-showfile-auto-read
