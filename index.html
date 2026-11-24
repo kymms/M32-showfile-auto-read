@@ -1,0 +1,4130 @@
+<!doctype html>
+<html lang="id">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Showfile Auto · M32</title>
+<style>
+:root{color-scheme:dark;font:16px system-ui;background:#111618;color:#eaf1ef}body{margin:0}main{max-width:1120px;margin:auto;padding:32px 18px}h1{font-size:clamp(30px,5vw,48px);margin:0}h2{margin:0 0 12px}p{color:#b6c5c3;line-height:1.5}.panel{background:#1a2225;border:1px solid #354347;border-radius:14px;padding:20px;margin-top:20px}.fields{display:flex;flex-wrap:wrap;gap:16px}.fields label{flex:1;min-width:220px}label{display:block;font-weight:650}input,select,textarea,button{font:inherit;padding:9px;border:1px solid #506166;border-radius:7px;background:#11181a;color:inherit;box-sizing:border-box}label input,label select,textarea{width:100%;margin-top:6px}textarea{min-height:210px;resize:vertical;font:16px ui-monospace,monospace}button{cursor:pointer}button.primary{background:#a8efce;color:#12251d;font-weight:700}button:disabled{opacity:.5;cursor:default}.actions{display:flex;flex-wrap:wrap;gap:8px}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;text-align:left;font-size:14px}th,td{padding:8px;border-bottom:1px solid #354347;white-space:nowrap}th{color:#a8efce}td input{width:132px}td input.name{width:145px}.warn{color:#ffd480}summary{cursor:pointer;margin:14px 0}code{color:#a8efce}
+#mixbus-fields{margin-top:24px}textarea#mixbus-list,textarea#output-list{min-height:110px}label[for="output-list"]{margin-top:24px}input[hidden]{display:none}button{min-height:44px}#clip-status:empty{display:none}@media(max-width:560px){main{padding:20px 12px}.panel{padding:14px}.fields label{min-width:100%}.actions{gap:6px}textarea{min-height:150px}td input,td select{font-size:16px}}
+.pdf-import{margin:22px 0;padding:16px;border:1px solid #354347;border-radius:10px}.pdf-import h2{font-size:1.15rem}.pdf-import textarea{min-height:95px}.pdf-import label{margin-bottom:12px}.pdf-import pre{max-height:255px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}.pdf-import [hidden]{display:none}#pdf-status:empty{display:none}
+
+.wizard [hidden]{display:none}
+.wizard-progress{color:#a8efce;font-weight:650;margin-top:0}
+.wizard-nav{margin-top:20px;padding-top:16px;border-top:1px solid #354347}
+.wizard #pdf-text{max-height:245px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.wizard .preview-table{max-height:420px;overflow:auto;margin:6px 0 18px}
+.wizard .preview-table table{width:100%;table-layout:fixed}
+.wizard .preview-table th:first-child{width:82px}
+.wizard .preview-table th:last-child{width:27%}
+.wizard .preview-table td,.wizard .preview-table th{padding:5px;white-space:normal;overflow-wrap:anywhere}
+.wizard .preview-table input,.wizard .preview-table select{width:100%;min-height:40px;font-size:16px}
+.wizard .preview-table th{position:sticky;top:0;background:#1a2225}
+.wizard #preview-feedback:empty{display:none}
+.wizard #wizard-mode-help{margin:0 0 10px}
+.wizard #pdf-status:empty{display:none}
+.wizard .preview-table tr.review-needed{background:#342d23}
+.wizard .preview-table tr.review-needed td:first-child{border-left:3px solid #ffd480}
+.wizard .preview-row-review{display:block;color:#ffd480;font-size:.875rem;padding:3px 0}
+.wizard .preview-review-button{padding:4px 6px;min-height:44px;font-size:.875rem}
+.channel-overview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.channel-overview h3{margin:0 0 8px}
+.channel-overview td,.channel-overview th{white-space:normal;overflow-wrap:anywhere}
+.channel-overview th:first-child{width:76px}
+.channel-overview tr.review-needed{background:#342d23}
+@media(max-width:650px){.channel-overview{grid-template-columns:1fr}}
+.overview-review-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.overview-review-actions input{width:100%;min-width:0;font-size:16px}
+.dca-table td:last-child{white-space:normal;overflow-wrap:anywhere}
+.send-mode-table td{white-space:normal;overflow-wrap:anywhere}
+.send-mode-table select{max-width:100%;min-height:44px}
+.custom-send-table{margin:12px 0}
+.custom-send-table table{table-layout:fixed}
+.custom-send-table th,.custom-send-table td{box-sizing:border-box;white-space:normal;overflow-wrap:anywhere;padding:4px;vertical-align:middle}
+.custom-send-table th[scope=row]{color:inherit}
+.custom-send-table th:nth-child(1){width:25%}
+.custom-send-table th:nth-child(2){width:28%}
+.custom-send-table th:nth-child(3){width:29%}
+.custom-send-table th:nth-child(4){width:18%;text-align:center}
+.custom-send-table select,.custom-send-table .pan-follow-button{width:100%;min-width:0;min-height:36px;padding:4px;font-size:16px}
+.custom-send-table select{white-space:nowrap;text-overflow:ellipsis}
+.custom-send-table .pan-follow-button{font-size:14px;font-weight:700}
+.custom-send-table .pan-follow-button[aria-pressed=true]{background:#a8efce;color:#12251d}
+@media(max-width:600px){.custom-send-table th,.custom-send-table td{padding:3px;font-size:13px}.custom-send-table select{padding-inline:3px 0}}
+#custom-send-summary td{white-space:normal;overflow-wrap:anywhere}
+.manual-link-table td{white-space:normal;overflow-wrap:anywhere}
+.manual-link-table select{max-width:100%;min-height:44px;font-size:16px}
+.manual-link-status{display:block;margin-top:4px}
+.chain-icon{display:inline-block;margin-inline-start:.35em;vertical-align:baseline;font-size:.95em;line-height:1}
+.fader-preset-buttons button[aria-pressed=true]{background:#a8efce;color:#17342a;border-color:#a8efce}
+.fader-set-table td{white-space:normal}
+.fader-preset-buttons button{padding-inline:8px}
+#all-input-fader-buttons,#all-send-fader-buttons,#selected-bus-send-buttons{margin-block:10px}
+</style>
+<main>
+<h1>Showfile Auto · M32</h1>
+<p>Siapkan scene M32 dari stage rider atau daftar yang kamu tempel.</p>
+<p id="startup-help" class="warn">Jika halaman ini tetap menampilkan pesan ini, JavaScript belum berjalan. Di iPhone, buka URL aplikasi di Safari agar tombol bisa digunakan.</p>
+<form class="panel wizard" id="form">
+<p id="wizard-progress" class="wizard-progress" aria-live="polite"></p>
+<section id="wizard-role">
+<h2>Pilih jobdesk</h2>
+<div class="fields"><label>Jobdesk<select id="mixing-role" aria-describedby="role-help"><option value="" selected>Pilih FOH atau Monitor</option><option value="foh">FOH</option><option value="monitor">Monitor</option></select></label><label>Nama show<input id="show" placeholder="Contoh: Rony — Jakarta"></label></div>
+<p id="role-help" class="warn" role="status" hidden>Pilih FOH atau Monitor untuk lanjut ke impor.</p>
+</section>
+<section id="wizard-import" hidden>
+<h2>Impor stage rider</h2>
+<p>Pilih PDF stage rider atau input list yang teksnya bisa disalin.</p>
+<div class="actions"><button type="button" id="open-pdf">Impor PDF</button><input type="file" id="pdf-file" accept=".pdf,application/pdf" hidden></div>
+<p id="pdf-status" role="status"></p>
+</section>
+<section id="wizard-setup" hidden>
+<h2 id="wizard-setup-title">Preview dan setup</h2>
+<p id="wizard-mode-help"></p>
+<div id="wizard-pdf-notes">
+<ul id="wizard-rider-warnings" class="warn" hidden></ul>
+<details id="pdf-raw" hidden><summary>Lihat teks PDF yang terbaca</summary><pre id="pdf-text" tabindex="0"></pre></details>
+</div>
+<details id="manual-channel-link" hidden>
+<summary>Link channel manual</summary>
+<p>Pilih Auto, 🔗, atau Off untuk pasangan input ganjil–genap.</p>
+<div class="scroll manual-link-table"><table aria-label="Link channel manual"><thead><tr><th scope="col">Pasangan</th><th scope="col">Nama channel</th><th scope="col">Link</th></tr></thead><tbody id="manual-channel-link-rows"></tbody></table></div>
+</details>
+<div id="wizard-preview-rows" class="channel-overview">
+<section><h3>Input</h3><table aria-label="Input"><thead><tr><th scope="col">Nomor</th><th scope="col">Nama channel</th></tr></thead><tbody id="overview-input"></tbody></table></section>
+<section><h3>Output</h3><table aria-label="Output"><thead><tr><th scope="col">Nomor</th><th scope="col">Nama channel</th></tr></thead><tbody id="overview-output"></tbody></table></section>
+</div>
+<div id="wizard-routing-editor" hidden>
+<h3>Input List</h3>
+<div class="preview-table" id="preview-input-table"><table aria-label="Nama channel"><thead><tr><th scope="col">CH</th><th scope="col">Nama channel</th><th scope="col">Patch</th></tr></thead><tbody id="preview-input-body"></tbody></table></div><h3>Mix Bus</h3><p>Ganti nama di sini atau di kolom Nama output. Bus yang terhubung berbagi nama Mix Bus.</p><div class="preview-table" id="preview-bus-table"><table aria-label="Nama Mix Bus"><thead><tr><th scope="col">Bus</th><th scope="col">Nama Mix Bus</th><th scope="col">Mode</th></tr></thead><tbody id="preview-bus-body"></tbody></table></div><h3>Output Patch</h3><p>Ganti nomor untuk memindahkan item. Jika nomor sudah terisi, kedua item bertukar posisi.</p><div class="preview-table" id="preview-output-table"><table aria-label="Sumber"><thead><tr><th scope="col">Out</th><th scope="col">Sumber</th><th scope="col">Nama output</th></tr></thead><tbody id="preview-output-body"></tbody></table></div><button type="button" id="preview-add-output">Tambah output</button><p id="preview-feedback" role="status"></p><details id="preview-rider-outputs" hidden><summary id="preview-rider-output-title">Output di PDF rider</summary><ul id="preview-rider-output-list"></ul></details>
+</div>
+<div id="wizard-edit-fields" hidden><p><label for="list">Input list</label> Satu channel per baris. Paste juga dari Excel dengan kolom <code>CH ↹ Nama ↹ Patch</code>. Patch opsional.</p>
+<textarea id="list" aria-describedby="paste-help" spellcheck="false" autocapitalize="off" autocomplete="off" placeholder="1 Kick In&#10;2 Snare Top&#10;9 Bass DI&#10;17 Lead Vox"></textarea>
+<p id="paste-help" aria-live="polite">Ketuk dan tahan di kolom, lalu pilih Tempel. Di komputer, gunakan Ctrl+V atau Cmd+V.</p>
+<div class="actions"><button type="button" id="paste" class="primary">Tempel input list</button><button type="button" id="import">Buka TXT/TSV</button><input type="file" id="input-file" accept=".txt,.tsv,text/plain,text/tab-separated-values" hidden><button type="button" id="sample">Isi contoh</button><button type="button" id="reset">Kembalikan setting otomatis</button></div>
+<details><summary>Format input dan default patch</summary><p>Masukkan <code>9 Bass DI</code> untuk mempertahankan nomor channel, atau <code>Bass DI</code> untuk penomoran otomatis. Untuk patch khusus, gunakan <code>9 | Bass DI | AES50-A 15</code>. Patch kosong mengikuti Local 1–32. Patch menerima Local, AES50-A, AES50-B, Card, Aux, dan OFF.</p></details>
+
+</div>
+<div id="wizard-foh-settings" class="fields" hidden><label id="foh-default">Routing FOH saat Mix Bus kosong<select id="mode"><option value="direct">Langsung ke Main LR</option><option value="group">Subgroup otomatis</option></select></label></div>
+<div id="preview-paste-fields"><div id="mixbus-fields">
+  <label for="mixbus-list">Mix Bus 1–16</label>
+  <p id="bus-help">Format <code>nomor | nama | mode</code>. Rentang ganjil–genap menghubungkan kedua bus. Gunakan <code>GRP</code> untuk subgroup dan <code>POST</code> untuk FX atau aux post-fader.</p>
+  <textarea id="mixbus-list" aria-describedby="bus-help" spellcheck="false" autocapitalize="off" placeholder="9-10 | DRUM | GRP&#10;13 | Reverb | POST"></textarea>
+  <div class="actions"><button type="button" data-paste="mixbus-list">Tempel Mix Bus</button></div>
+</div>
+<div>
+  <label for="output-list">Output Patch 1–16</label>
+  <p id="output-help">Format <code>Out | sumber | tap</code>. Contoh <code>15 | Main L</code>, <code>3 | Bus 1</code>, atau <code>7 | Matrix 1</code>. Tap kosong memakai POST.</p>
+  <textarea id="output-list" aria-describedby="output-help" spellcheck="false" autocapitalize="off" placeholder="15 | Main L&#10;16 | Main R"></textarea>
+  <div class="actions"><button type="button" data-paste="output-list">Tempel Output Patch</button></div>
+  <p>Nomor mengikuti slot Routing → Out 1–16. Cek pemetaan XLR dan AES50 sesuai perangkatmu. Slot yang kosong mengikuti scene dasar.</p>
+</div>
+<p id="clip-status" aria-live="polite"></p></div>
+
+
+<ul id="errors" class="warn" hidden></ul>
+<div id="edit-routing-summary"><div id="buses"></div><div id="outputs"></div></div>
+<div id="wizard-edit-table" hidden><h3>Setting channel</h3><p id="status" aria-live="polite"></p>
+<div class="scroll" tabindex="0" aria-label="Preview pengaturan channel"><table><thead><tr><th>CH</th><th>Nama channel</th><th>Patch</th><th>Warna</th><th>Pan</th><th>Subgroup</th><th>DCA</th><th>Main LR CH</th><th>Review</th></tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+</section>
+<section id="wizard-dca" hidden>
+<h2>DCA konfirmasi</h2>
+<p id="dca-description"></p>
+<div class="scroll dca-table"><table aria-label="Grup DCA"><thead><tr><th scope="col">DCA</th><th scope="col">Nama</th><th scope="col">Anggota</th></tr></thead><tbody id="dca-groups"></tbody></table></div>
+<details><summary>Ubah DCA input</summary><div class="scroll"><table aria-label="DCA per input"><thead><tr><th scope="col">CH</th><th scope="col">Nama channel</th><th scope="col">DCA</th></tr></thead><tbody id="dca-channels"></tbody></table></div></details>
+</section>
+<section id="wizard-send-mode" hidden>
+<h2>Konfirmasi send mode</h2>
+<p>M32 memakai mode send yang sama untuk pasangan Mix Bus ganjil–genap.</p>
+<div class="scroll send-mode-table"><table aria-label="Send mode Mix Bus"><thead><tr><th scope="col">Mix Bus</th><th scope="col">Nama</th><th scope="col">Send mode</th></tr></thead><tbody id="send-mode-buses"></tbody></table></div>
+<p id="send-mode-error" class="warn" hidden>Perbaiki konfigurasi Mix Bus di Preview → Edit I/O.</p>
+</section>
+<section id="wizard-custom-send" hidden>
+<h2>Custom send mode</h2>
+<p>Tap point berlaku per channel input dan pasangan Mix Bus. Untuk input stereo, atur dari channel kiri. Pan Follow LR tersedia untuk Mix Bus stereo.</p>
+<p id="custom-send-note" class="warn" hidden></p>
+<div class="scroll custom-send-table" id="custom-send-editor"><table aria-label="Custom send per channel"><thead><tr><th scope="col">Channel</th><th scope="col">Mix Bus</th><th scope="col">Send Mode</th><th scope="col">Pan Follow LR</th></tr></thead><tbody id="custom-send-rows"></tbody></table></div>
+<details id="custom-send-summary" hidden><summary>Custom send tersimpan</summary><div class="scroll send-mode-table"><table aria-label="Custom send yang diterapkan"><thead><tr><th scope="col">Channel</th><th scope="col">Mix Bus</th><th scope="col">Tap point</th><th scope="col">Pan Follow LR</th></tr></thead><tbody id="custom-send-overrides"></tbody></table></div></details>
+</section>
+<section id="wizard-fader-set" hidden>
+<h2>Fader Set</h2>
+<h3>Set All</h3>
+<h4>Main Fader · Fader input to LR</h4>
+<div id="all-input-fader-buttons"></div>
+<h4>Channel to all bus</h4>
+<div id="all-send-fader-buttons"></div>
+<h3>Main LR</h3>
+<div id="main-fader-buttons" class="actions" role="group" aria-label="Fader Main LR"></div>
+<details><summary>Fader input channel</summary>
+<div class="scroll fader-set-table"><table aria-label="Fader input"><thead><tr><th scope="col">Channel</th><th scope="col">Level</th></tr></thead><tbody id="input-fader-rows"></tbody></table></div>
+</details>
+<h3>Mix Bus Send</h3>
+<label>Pilih Mix Bus<select id="send-fader-bus"></select></label>
+<p id="send-fader-note" hidden></p>
+<div id="selected-bus-send-buttons" hidden></div>
+<div class="scroll fader-set-table" id="send-fader-editor"><table aria-label="Level send per channel"><thead><tr><th scope="col">Channel</th><th scope="col">Level</th></tr></thead><tbody id="send-fader-rows"></tbody></table></div>
+</section>
+<section id="wizard-generate" hidden>
+<h2>Generate scene</h2>
+<p>Versi 30 · 24 November 2026</p>
+<p id="wizard-generate-summary"></p>
+<ul id="wizard-generate-issues" class="warn" hidden></ul>
+<div class="actions"><button type="button" class="primary" id="scene-export" disabled>Unduh scene .scn</button><button type="button" id="export" hidden disabled>Unduh ringkasan TSV</button></div>
+<p id="export-result" role="status"></p>
+
+</section>
+<div class="actions wizard-nav">
+<button type="button" id="wizard-back" hidden>Kembali</button>
+<button type="button" id="wizard-io-toggle" hidden aria-controls="wizard-routing-editor" aria-expanded="false">Edit I/O</button>
+<button type="button" id="wizard-next" class="primary" disabled>Lanjut ke impor</button>
+</div>
+</form>
+</main>
+<script id="scene-base" type="text/plain">#4.0# "AI_TEMPLATE" "" %000000000 1                                                                                            
+/config/chlink OFF OFF OFF OFF OFF OFF OFF OFF OFF OFF OFF OFF OFF OFF OFF OFF
+/config/auxlink OFF OFF OFF ON
+/config/fxlink ON ON ON ON
+/config/buslink ON ON ON ON ON ON OFF OFF
+/config/mtxlink OFF OFF OFF
+/config/mute OFF OFF OFF OFF OFF OFF
+/config/linkcfg ON ON ON ON
+/config/mono LR+M OFF
+/config/solo   0.0 LRAFL 0.0 PFL PFL PFL OFF OFF OFF -20 OFF OFF OFF   0.3 OFF OFF OFF
+/config/talk ON EXT
+/config/talk/A -12.0 OFF OFF %000000000000000000
+/config/talk/B -12.0 OFF ON %000000000000000000
+/config/osc -40.0 100.2 1k00 F1 PINK 0
+/config/userrout/out 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+/config/userrout/in 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+/config/routing REC
+/config/routing/IN AN1-8 AN9-16 AN17-24 AN25-32 AUX1-4
+/config/routing/AES50A OUT1-8 OUT9-16 OUT1-8 OUT9-16 P161-8 P169-16
+/config/routing/AES50B OUT1-8 OUT9-16 OUT1-8 OUT9-16 P161-8 P169-16
+/config/routing/CARD AN1-8 AN9-16 AN17-24 AN25-32
+/config/routing/OUT OUT1-4 OUT5-8 OUT9-12 OUT13-16
+/config/routing/PLAY CARD1-8 CARD9-16 CARD17-24 CARD25-32 AUX1-4
+/config/userctrl/A CY
+/config/userctrl/A/enc "X001" "X101" "X201" "X300"
+/config/userctrl/A/btn "O40" "O42" "X201" "X300" "P0051" "P0052" "P0053" "P0058"
+/config/userctrl/B GN
+/config/userctrl/B/enc "DG" "DJ" "DK" "DL"
+/config/userctrl/B/btn "P0010" "P0011" "P0012" "P0013" "A0" "A1" "P0000" "P0000"
+/config/userctrl/C YE
+/config/userctrl/C/enc "U2" "U1" "-" "U0"
+/config/userctrl/C/btn "U11" "U10" "P0036" "U09" "U00" "U06" "U02" "U05"
+/config/tape 0.0 0.0 ON
+/config/amixenable ON ON
+/config/dp48 %0000 0 AESA
+/config/dp48/assign 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+/config/dp48/link 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+/config/dp48/grpname "" "" "" "" "" "" "" "" "" "" "" ""
+/ch/01/config "KICK IN" 1 RD 1
+/ch/01/delay OFF   0.3
+/ch/01/preamp +0.0 OFF OFF 24  20
+/ch/01/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/01/gate/filter OFF 3.0 990.9
+/ch/01/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/01/dyn/filter OFF 3.0 990.9
+/ch/01/insert OFF POST OFF
+/ch/01/eq OFF
+/ch/01/eq/1 PEQ 124.7 +0.00 2.0
+/ch/01/eq/2 PEQ 496.6 +0.00 2.0
+/ch/01/eq/3 PEQ 1k97 +0.00 2.0
+/ch/01/eq/4 HShv 10k02 +0.00 2.0
+/ch/01/mix ON   -oo ON +0 OFF   -oo
+/ch/01/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/01/mix/02 ON   -30.0
+/ch/01/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/01/mix/04 ON   -30.0
+/ch/01/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/01/mix/06 ON   -30.0
+/ch/01/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/01/mix/08 ON   -30.0
+/ch/01/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/01/mix/10 ON   -30.0
+/ch/01/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/01/mix/12 ON   -30.0
+/ch/01/mix/13 ON   -oo +0 POST 0
+/ch/01/mix/14 ON   -oo
+/ch/01/mix/15 ON   -oo +0 POST 0
+/ch/01/mix/16 ON   -oo
+/ch/01/grp %00000000 %000000
+/ch/01/automix OFF  +0.0
+/ch/02/config "KICK OUT" 1 RD 2
+/ch/02/delay OFF   0.3
+/ch/02/preamp +0.0 OFF OFF 24  20
+/ch/02/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/02/gate/filter OFF 3.0 990.9
+/ch/02/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/02/dyn/filter OFF 3.0 990.9
+/ch/02/insert OFF POST OFF
+/ch/02/eq OFF
+/ch/02/eq/1 PEQ 124.7 +0.00 2.0
+/ch/02/eq/2 PEQ 496.6 +0.00 2.0
+/ch/02/eq/3 PEQ 1k97 +0.00 2.0
+/ch/02/eq/4 HShv 10k02 +0.00 2.0
+/ch/02/mix ON   -oo ON +0 OFF   -oo
+/ch/02/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/02/mix/02 ON   -30.0
+/ch/02/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/02/mix/04 ON   -30.0
+/ch/02/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/02/mix/06 ON   -30.0
+/ch/02/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/02/mix/08 ON   -30.0
+/ch/02/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/02/mix/10 ON   -30.0
+/ch/02/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/02/mix/12 ON   -30.0
+/ch/02/mix/13 ON   -oo +0 POST 0
+/ch/02/mix/14 ON   -oo
+/ch/02/mix/15 ON   -oo +0 POST 0
+/ch/02/mix/16 ON   -oo
+/ch/02/grp %00000000 %000000
+/ch/02/automix OFF  +0.0
+/ch/03/config "SNARE TOP" 1 RD 3
+/ch/03/delay OFF   0.3
+/ch/03/preamp +0.0 OFF OFF 24  20
+/ch/03/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/03/gate/filter OFF 3.0 990.9
+/ch/03/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/03/dyn/filter OFF 3.0 990.9
+/ch/03/insert OFF POST OFF
+/ch/03/eq OFF
+/ch/03/eq/1 PEQ 124.7 +0.00 2.0
+/ch/03/eq/2 PEQ 496.6 +0.00 2.0
+/ch/03/eq/3 PEQ 1k97 +0.00 2.0
+/ch/03/eq/4 HShv 10k02 +0.00 2.0
+/ch/03/mix ON   -oo ON +0 OFF   -oo
+/ch/03/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/03/mix/02 ON   -30.0
+/ch/03/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/03/mix/04 ON   -30.0
+/ch/03/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/03/mix/06 ON   -30.0
+/ch/03/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/03/mix/08 ON   -30.0
+/ch/03/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/03/mix/10 ON   -30.0
+/ch/03/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/03/mix/12 ON   -30.0
+/ch/03/mix/13 ON   -oo +0 POST 0
+/ch/03/mix/14 ON   -oo
+/ch/03/mix/15 ON   -oo +0 POST 0
+/ch/03/mix/16 ON   -oo
+/ch/03/grp %00000000 %000000
+/ch/03/automix OFF  +0.0
+/ch/04/config "SNARE BTM" 1 RD 4
+/ch/04/delay OFF   0.3
+/ch/04/preamp +0.0 OFF OFF 24  20
+/ch/04/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/04/gate/filter OFF 3.0 990.9
+/ch/04/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/04/dyn/filter OFF 3.0 990.9
+/ch/04/insert OFF POST OFF
+/ch/04/eq OFF
+/ch/04/eq/1 PEQ 124.7 +0.00 2.0
+/ch/04/eq/2 PEQ 496.6 +0.00 2.0
+/ch/04/eq/3 PEQ 1k97 +0.00 2.0
+/ch/04/eq/4 HShv 10k02 +0.00 2.0
+/ch/04/mix ON   -oo ON +0 OFF   -oo
+/ch/04/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/04/mix/02 ON   -30.0
+/ch/04/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/04/mix/04 ON   -30.0
+/ch/04/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/04/mix/06 ON   -30.0
+/ch/04/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/04/mix/08 ON   -30.0
+/ch/04/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/04/mix/10 ON   -30.0
+/ch/04/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/04/mix/12 ON   -30.0
+/ch/04/mix/13 ON   -oo +0 POST 0
+/ch/04/mix/14 ON   -oo
+/ch/04/mix/15 ON   -oo +0 POST 0
+/ch/04/mix/16 ON   -oo
+/ch/04/grp %00000000 %000000
+/ch/04/automix OFF  +0.0
+/ch/05/config "HI HAT" 1 YE 5
+/ch/05/delay OFF   0.3
+/ch/05/preamp +0.0 OFF OFF 24  20
+/ch/05/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/05/gate/filter OFF 3.0 990.9
+/ch/05/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/05/dyn/filter OFF 3.0 990.9
+/ch/05/insert OFF POST OFF
+/ch/05/eq OFF
+/ch/05/eq/1 PEQ 124.7 +0.00 2.0
+/ch/05/eq/2 PEQ 496.6 +0.00 2.0
+/ch/05/eq/3 PEQ 1k97 +0.00 2.0
+/ch/05/eq/4 HShv 10k02 +0.00 2.0
+/ch/05/mix ON   -oo ON +0 OFF   -oo
+/ch/05/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/05/mix/02 ON   -30.0
+/ch/05/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/05/mix/04 ON   -30.0
+/ch/05/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/05/mix/06 ON   -30.0
+/ch/05/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/05/mix/08 ON   -30.0
+/ch/05/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/05/mix/10 ON   -30.0
+/ch/05/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/05/mix/12 ON   -30.0
+/ch/05/mix/13 ON   -oo +0 POST 0
+/ch/05/mix/14 ON   -oo
+/ch/05/mix/15 ON   -oo +0 POST 0
+/ch/05/mix/16 ON   -oo
+/ch/05/grp %00000000 %000000
+/ch/05/automix OFF  +0.0
+/ch/06/config "TOM 1" 1 RD 6
+/ch/06/delay OFF   0.3
+/ch/06/preamp +0.0 OFF OFF 24  20
+/ch/06/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/06/gate/filter OFF 3.0 990.9
+/ch/06/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/06/dyn/filter OFF 3.0 990.9
+/ch/06/insert OFF POST OFF
+/ch/06/eq OFF
+/ch/06/eq/1 PEQ 124.7 +0.00 2.0
+/ch/06/eq/2 PEQ 496.6 +0.00 2.0
+/ch/06/eq/3 PEQ 1k97 +0.00 2.0
+/ch/06/eq/4 HShv 10k02 +0.00 2.0
+/ch/06/mix ON   -oo ON +0 OFF   -oo
+/ch/06/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/06/mix/02 ON   -30.0
+/ch/06/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/06/mix/04 ON   -30.0
+/ch/06/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/06/mix/06 ON   -30.0
+/ch/06/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/06/mix/08 ON   -30.0
+/ch/06/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/06/mix/10 ON   -30.0
+/ch/06/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/06/mix/12 ON   -30.0
+/ch/06/mix/13 ON   -oo +0 POST 0
+/ch/06/mix/14 ON   -oo
+/ch/06/mix/15 ON   -oo +0 POST 0
+/ch/06/mix/16 ON   -oo
+/ch/06/grp %00000000 %000000
+/ch/06/automix OFF  +0.0
+/ch/07/config "TOM 2" 1 RD 7
+/ch/07/delay OFF   0.3
+/ch/07/preamp +0.0 OFF OFF 24  20
+/ch/07/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/07/gate/filter OFF 3.0 990.9
+/ch/07/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/07/dyn/filter OFF 3.0 990.9
+/ch/07/insert OFF POST OFF
+/ch/07/eq OFF
+/ch/07/eq/1 PEQ 124.7 +0.00 2.0
+/ch/07/eq/2 PEQ 496.6 +0.00 2.0
+/ch/07/eq/3 PEQ 1k97 +0.00 2.0
+/ch/07/eq/4 HShv 10k02 +0.00 2.0
+/ch/07/mix ON   -oo ON +0 OFF   -oo
+/ch/07/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/07/mix/02 ON   -30.0
+/ch/07/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/07/mix/04 ON   -30.0
+/ch/07/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/07/mix/06 ON   -30.0
+/ch/07/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/07/mix/08 ON   -30.0
+/ch/07/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/07/mix/10 ON   -30.0
+/ch/07/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/07/mix/12 ON   -30.0
+/ch/07/mix/13 ON   -oo +0 POST 0
+/ch/07/mix/14 ON   -oo
+/ch/07/mix/15 ON   -oo +0 POST 0
+/ch/07/mix/16 ON   -oo
+/ch/07/grp %00000000 %000000
+/ch/07/automix OFF  +0.0
+/ch/08/config "FLOOR TOM" 1 RD 8
+/ch/08/delay OFF   0.3
+/ch/08/preamp +0.0 OFF OFF 24  20
+/ch/08/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/08/gate/filter OFF 3.0 990.9
+/ch/08/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/08/dyn/filter OFF 3.0 990.9
+/ch/08/insert OFF POST OFF
+/ch/08/eq OFF
+/ch/08/eq/1 PEQ 124.7 +0.00 2.0
+/ch/08/eq/2 PEQ 496.6 +0.00 2.0
+/ch/08/eq/3 PEQ 1k97 +0.00 2.0
+/ch/08/eq/4 HShv 10k02 +0.00 2.0
+/ch/08/mix ON   -oo ON +0 OFF   -oo
+/ch/08/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/08/mix/02 ON   -30.0
+/ch/08/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/08/mix/04 ON   -30.0
+/ch/08/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/08/mix/06 ON   -30.0
+/ch/08/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/08/mix/08 ON   -30.0
+/ch/08/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/08/mix/10 ON   -30.0
+/ch/08/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/08/mix/12 ON   -30.0
+/ch/08/mix/13 ON   -oo +0 POST 0
+/ch/08/mix/14 ON   -oo
+/ch/08/mix/15 ON   -oo +0 POST 0
+/ch/08/mix/16 ON   -oo
+/ch/08/grp %00000000 %000000
+/ch/08/automix OFF  +0.0
+/ch/09/config "OH L" 1 YE 9
+/ch/09/delay OFF   0.3
+/ch/09/preamp +0.0 OFF OFF 24  20
+/ch/09/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/09/gate/filter OFF 3.0 990.9
+/ch/09/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/09/dyn/filter OFF 3.0 990.9
+/ch/09/insert OFF POST OFF
+/ch/09/eq OFF
+/ch/09/eq/1 PEQ 124.7 +0.00 2.0
+/ch/09/eq/2 PEQ 496.6 +0.00 2.0
+/ch/09/eq/3 PEQ 1k97 +0.00 2.0
+/ch/09/eq/4 HShv 10k02 +0.00 2.0
+/ch/09/mix ON   -oo ON +0 OFF   -oo
+/ch/09/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/09/mix/02 ON   -30.0
+/ch/09/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/09/mix/04 ON   -30.0
+/ch/09/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/09/mix/06 ON   -30.0
+/ch/09/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/09/mix/08 ON   -30.0
+/ch/09/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/09/mix/10 ON   -30.0
+/ch/09/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/09/mix/12 ON   -30.0
+/ch/09/mix/13 ON   -oo +0 POST 0
+/ch/09/mix/14 ON   -oo
+/ch/09/mix/15 ON   -oo +0 POST 0
+/ch/09/mix/16 ON   -oo
+/ch/09/grp %00000000 %000000
+/ch/09/automix OFF  +0.0
+/ch/10/config "OH R" 1 YE 10
+/ch/10/delay OFF   0.3
+/ch/10/preamp +0.0 OFF OFF 24  20
+/ch/10/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/10/gate/filter OFF 3.0 990.9
+/ch/10/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/10/dyn/filter OFF 3.0 990.9
+/ch/10/insert OFF POST OFF
+/ch/10/eq OFF
+/ch/10/eq/1 PEQ 124.7 +0.00 2.0
+/ch/10/eq/2 PEQ 496.6 +0.00 2.0
+/ch/10/eq/3 PEQ 1k97 +0.00 2.0
+/ch/10/eq/4 HShv 10k02 +0.00 2.0
+/ch/10/mix ON   -oo ON +0 OFF   -oo
+/ch/10/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/10/mix/02 ON   -30.0
+/ch/10/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/10/mix/04 ON   -30.0
+/ch/10/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/10/mix/06 ON   -30.0
+/ch/10/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/10/mix/08 ON   -30.0
+/ch/10/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/10/mix/10 ON   -30.0
+/ch/10/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/10/mix/12 ON   -30.0
+/ch/10/mix/13 ON   -oo +0 POST 0
+/ch/10/mix/14 ON   -oo
+/ch/10/mix/15 ON   -oo +0 POST 0
+/ch/10/mix/16 ON   -oo
+/ch/10/grp %00000000 %000000
+/ch/10/automix OFF  +0.0
+/ch/11/config "BASS DI" 1 BL 11
+/ch/11/delay OFF   0.3
+/ch/11/preamp +0.0 OFF OFF 24  20
+/ch/11/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/11/gate/filter OFF 3.0 990.9
+/ch/11/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/11/dyn/filter OFF 3.0 990.9
+/ch/11/insert OFF POST OFF
+/ch/11/eq OFF
+/ch/11/eq/1 PEQ 124.7 +0.00 2.0
+/ch/11/eq/2 PEQ 496.6 +0.00 2.0
+/ch/11/eq/3 PEQ 1k97 +0.00 2.0
+/ch/11/eq/4 HShv 10k02 +0.00 2.0
+/ch/11/mix ON   -oo ON +0 OFF   -oo
+/ch/11/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/11/mix/02 ON   -30.0
+/ch/11/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/11/mix/04 ON   -30.0
+/ch/11/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/11/mix/06 ON   -30.0
+/ch/11/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/11/mix/08 ON   -30.0
+/ch/11/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/11/mix/10 ON   -30.0
+/ch/11/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/11/mix/12 ON   -30.0
+/ch/11/mix/13 ON   -oo +0 POST 0
+/ch/11/mix/14 ON   -oo
+/ch/11/mix/15 ON   -oo +0 POST 0
+/ch/11/mix/16 ON   -oo
+/ch/11/grp %00000000 %000000
+/ch/11/automix OFF  +0.0
+/ch/12/config "BASS MIC" 1 BL 12
+/ch/12/delay OFF   0.3
+/ch/12/preamp +0.0 OFF OFF 24  20
+/ch/12/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/12/gate/filter OFF 3.0 990.9
+/ch/12/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/12/dyn/filter OFF 3.0 990.9
+/ch/12/insert OFF POST OFF
+/ch/12/eq OFF
+/ch/12/eq/1 PEQ 124.7 +0.00 2.0
+/ch/12/eq/2 PEQ 496.6 +0.00 2.0
+/ch/12/eq/3 PEQ 1k97 +0.00 2.0
+/ch/12/eq/4 HShv 10k02 +0.00 2.0
+/ch/12/mix ON   -oo ON +0 OFF   -oo
+/ch/12/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/12/mix/02 ON   -30.0
+/ch/12/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/12/mix/04 ON   -30.0
+/ch/12/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/12/mix/06 ON   -30.0
+/ch/12/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/12/mix/08 ON   -30.0
+/ch/12/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/12/mix/10 ON   -30.0
+/ch/12/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/12/mix/12 ON   -30.0
+/ch/12/mix/13 ON   -oo +0 POST 0
+/ch/12/mix/14 ON   -oo
+/ch/12/mix/15 ON   -oo +0 POST 0
+/ch/12/mix/16 ON   -oo
+/ch/12/grp %00000000 %000000
+/ch/12/automix OFF  +0.0
+/ch/13/config "GTR 1" 1 GN 13
+/ch/13/delay OFF   0.3
+/ch/13/preamp +0.0 OFF OFF 24  20
+/ch/13/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/13/gate/filter OFF 3.0 990.9
+/ch/13/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/13/dyn/filter OFF 3.0 990.9
+/ch/13/insert OFF POST OFF
+/ch/13/eq OFF
+/ch/13/eq/1 PEQ 124.7 +0.00 2.0
+/ch/13/eq/2 PEQ 496.6 +0.00 2.0
+/ch/13/eq/3 PEQ 1k97 +0.00 2.0
+/ch/13/eq/4 HShv 10k02 +0.00 2.0
+/ch/13/mix ON   -oo ON +0 OFF   -oo
+/ch/13/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/13/mix/02 ON   -30.0
+/ch/13/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/13/mix/04 ON   -30.0
+/ch/13/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/13/mix/06 ON   -30.0
+/ch/13/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/13/mix/08 ON   -30.0
+/ch/13/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/13/mix/10 ON   -30.0
+/ch/13/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/13/mix/12 ON   -30.0
+/ch/13/mix/13 ON   -oo +0 POST 0
+/ch/13/mix/14 ON   -oo
+/ch/13/mix/15 ON   -oo +0 POST 0
+/ch/13/mix/16 ON   -oo
+/ch/13/grp %00000000 %000000
+/ch/13/automix OFF  +0.0
+/ch/14/config "GTR 2" 1 GN 14
+/ch/14/delay OFF   0.3
+/ch/14/preamp +0.0 OFF OFF 24  20
+/ch/14/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/14/gate/filter OFF 3.0 990.9
+/ch/14/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/14/dyn/filter OFF 3.0 990.9
+/ch/14/insert OFF POST OFF
+/ch/14/eq OFF
+/ch/14/eq/1 PEQ 124.7 +0.00 2.0
+/ch/14/eq/2 PEQ 496.6 +0.00 2.0
+/ch/14/eq/3 PEQ 1k97 +0.00 2.0
+/ch/14/eq/4 HShv 10k02 +0.00 2.0
+/ch/14/mix ON   -oo ON +0 OFF   -oo
+/ch/14/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/14/mix/02 ON   -30.0
+/ch/14/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/14/mix/04 ON   -30.0
+/ch/14/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/14/mix/06 ON   -30.0
+/ch/14/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/14/mix/08 ON   -30.0
+/ch/14/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/14/mix/10 ON   -30.0
+/ch/14/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/14/mix/12 ON   -30.0
+/ch/14/mix/13 ON   -oo +0 POST 0
+/ch/14/mix/14 ON   -oo
+/ch/14/mix/15 ON   -oo +0 POST 0
+/ch/14/mix/16 ON   -oo
+/ch/14/grp %00000000 %000000
+/ch/14/automix OFF  +0.0
+/ch/15/config "AC GTR" 1 GN 15
+/ch/15/delay OFF   0.3
+/ch/15/preamp +0.0 OFF OFF 24  20
+/ch/15/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/15/gate/filter OFF 3.0 990.9
+/ch/15/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/15/dyn/filter OFF 3.0 990.9
+/ch/15/insert OFF POST OFF
+/ch/15/eq OFF
+/ch/15/eq/1 PEQ 124.7 +0.00 2.0
+/ch/15/eq/2 PEQ 496.6 +0.00 2.0
+/ch/15/eq/3 PEQ 1k97 +0.00 2.0
+/ch/15/eq/4 HShv 10k02 +0.00 2.0
+/ch/15/mix ON   -oo ON +0 OFF   -oo
+/ch/15/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/15/mix/02 ON   -30.0
+/ch/15/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/15/mix/04 ON   -30.0
+/ch/15/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/15/mix/06 ON   -30.0
+/ch/15/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/15/mix/08 ON   -30.0
+/ch/15/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/15/mix/10 ON   -30.0
+/ch/15/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/15/mix/12 ON   -30.0
+/ch/15/mix/13 ON   -oo +0 POST 0
+/ch/15/mix/14 ON   -oo
+/ch/15/mix/15 ON   -oo +0 POST 0
+/ch/15/mix/16 ON   -oo
+/ch/15/grp %00000000 %000000
+/ch/15/automix OFF  +0.0
+/ch/16/config "KEY L" 1 CY 16
+/ch/16/delay OFF   0.3
+/ch/16/preamp +0.0 OFF OFF 24  20
+/ch/16/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/16/gate/filter OFF 3.0 990.9
+/ch/16/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/16/dyn/filter OFF 3.0 990.9
+/ch/16/insert OFF POST OFF
+/ch/16/eq OFF
+/ch/16/eq/1 PEQ 124.7 +0.00 2.0
+/ch/16/eq/2 PEQ 496.6 +0.00 2.0
+/ch/16/eq/3 PEQ 1k97 +0.00 2.0
+/ch/16/eq/4 HShv 10k02 +0.00 2.0
+/ch/16/mix ON   -oo ON +0 OFF   -oo
+/ch/16/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/16/mix/02 ON   -30.0
+/ch/16/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/16/mix/04 ON   -30.0
+/ch/16/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/16/mix/06 ON   -30.0
+/ch/16/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/16/mix/08 ON   -30.0
+/ch/16/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/16/mix/10 ON   -30.0
+/ch/16/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/16/mix/12 ON   -30.0
+/ch/16/mix/13 ON   -oo +0 POST 0
+/ch/16/mix/14 ON   -oo
+/ch/16/mix/15 ON   -oo +0 POST 0
+/ch/16/mix/16 ON   -oo
+/ch/16/grp %00000000 %000000
+/ch/16/automix OFF  +0.0
+/ch/17/config "KEY R" 1 CY 17
+/ch/17/delay OFF   0.3
+/ch/17/preamp +0.0 OFF OFF 24  20
+/ch/17/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/17/gate/filter OFF 3.0 990.9
+/ch/17/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/17/dyn/filter OFF 3.0 990.9
+/ch/17/insert OFF POST OFF
+/ch/17/eq OFF
+/ch/17/eq/1 PEQ 124.7 +0.00 2.0
+/ch/17/eq/2 PEQ 496.6 +0.00 2.0
+/ch/17/eq/3 PEQ 1k97 +0.00 2.0
+/ch/17/eq/4 HShv 10k02 +0.00 2.0
+/ch/17/mix ON   -oo ON +0 OFF   -oo
+/ch/17/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/17/mix/02 ON   -30.0
+/ch/17/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/17/mix/04 ON   -30.0
+/ch/17/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/17/mix/06 ON   -30.0
+/ch/17/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/17/mix/08 ON   -30.0
+/ch/17/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/17/mix/10 ON   -30.0
+/ch/17/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/17/mix/12 ON   -30.0
+/ch/17/mix/13 ON   -oo +0 POST 0
+/ch/17/mix/14 ON   -oo
+/ch/17/mix/15 ON   -oo +0 POST 0
+/ch/17/mix/16 ON   -oo
+/ch/17/grp %00000000 %000000
+/ch/17/automix OFF  +0.0
+/ch/18/config "TRACK L" 1 CY 18
+/ch/18/delay OFF   0.3
+/ch/18/preamp +0.0 OFF OFF 24  20
+/ch/18/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/18/gate/filter OFF 3.0 990.9
+/ch/18/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/18/dyn/filter OFF 3.0 990.9
+/ch/18/insert OFF POST OFF
+/ch/18/eq OFF
+/ch/18/eq/1 PEQ 124.7 +0.00 2.0
+/ch/18/eq/2 PEQ 496.6 +0.00 2.0
+/ch/18/eq/3 PEQ 1k97 +0.00 2.0
+/ch/18/eq/4 HShv 10k02 +0.00 2.0
+/ch/18/mix ON   -oo ON +0 OFF   -oo
+/ch/18/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/18/mix/02 ON   -30.0
+/ch/18/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/18/mix/04 ON   -30.0
+/ch/18/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/18/mix/06 ON   -30.0
+/ch/18/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/18/mix/08 ON   -30.0
+/ch/18/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/18/mix/10 ON   -30.0
+/ch/18/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/18/mix/12 ON   -30.0
+/ch/18/mix/13 ON   -oo +0 POST 0
+/ch/18/mix/14 ON   -oo
+/ch/18/mix/15 ON   -oo +0 POST 0
+/ch/18/mix/16 ON   -oo
+/ch/18/grp %00000000 %000000
+/ch/18/automix OFF  +0.0
+/ch/19/config "TRACK R" 1 CY 19
+/ch/19/delay OFF   0.3
+/ch/19/preamp +0.0 OFF OFF 24  20
+/ch/19/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/19/gate/filter OFF 3.0 990.9
+/ch/19/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/19/dyn/filter OFF 3.0 990.9
+/ch/19/insert OFF POST OFF
+/ch/19/eq OFF
+/ch/19/eq/1 PEQ 124.7 +0.00 2.0
+/ch/19/eq/2 PEQ 496.6 +0.00 2.0
+/ch/19/eq/3 PEQ 1k97 +0.00 2.0
+/ch/19/eq/4 HShv 10k02 +0.00 2.0
+/ch/19/mix ON   -oo ON +0 OFF   -oo
+/ch/19/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/19/mix/02 ON   -30.0
+/ch/19/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/19/mix/04 ON   -30.0
+/ch/19/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/19/mix/06 ON   -30.0
+/ch/19/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/19/mix/08 ON   -30.0
+/ch/19/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/19/mix/10 ON   -30.0
+/ch/19/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/19/mix/12 ON   -30.0
+/ch/19/mix/13 ON   -oo +0 POST 0
+/ch/19/mix/14 ON   -oo
+/ch/19/mix/15 ON   -oo +0 POST 0
+/ch/19/mix/16 ON   -oo
+/ch/19/grp %00000000 %000000
+/ch/19/automix OFF  +0.0
+/ch/20/config "CLICK" 1 CY 20
+/ch/20/delay OFF   0.3
+/ch/20/preamp +0.0 OFF OFF 24  20
+/ch/20/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/20/gate/filter OFF 3.0 990.9
+/ch/20/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/20/dyn/filter OFF 3.0 990.9
+/ch/20/insert OFF POST OFF
+/ch/20/eq OFF
+/ch/20/eq/1 PEQ 124.7 +0.00 2.0
+/ch/20/eq/2 PEQ 496.6 +0.00 2.0
+/ch/20/eq/3 PEQ 1k97 +0.00 2.0
+/ch/20/eq/4 HShv 10k02 +0.00 2.0
+/ch/20/mix ON   -oo ON +0 OFF   -oo
+/ch/20/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/20/mix/02 ON   -30.0
+/ch/20/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/20/mix/04 ON   -30.0
+/ch/20/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/20/mix/06 ON   -30.0
+/ch/20/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/20/mix/08 ON   -30.0
+/ch/20/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/20/mix/10 ON   -30.0
+/ch/20/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/20/mix/12 ON   -30.0
+/ch/20/mix/13 ON   -oo +0 POST 0
+/ch/20/mix/14 ON   -oo
+/ch/20/mix/15 ON   -oo +0 POST 0
+/ch/20/mix/16 ON   -oo
+/ch/20/grp %00000000 %000000
+/ch/20/automix OFF  +0.0
+/ch/21/config "PERC 1" 1 YE 21
+/ch/21/delay OFF   0.3
+/ch/21/preamp +0.0 OFF OFF 24  20
+/ch/21/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/21/gate/filter OFF 3.0 990.9
+/ch/21/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/21/dyn/filter OFF 3.0 990.9
+/ch/21/insert OFF POST OFF
+/ch/21/eq OFF
+/ch/21/eq/1 PEQ 124.7 +0.00 2.0
+/ch/21/eq/2 PEQ 496.6 +0.00 2.0
+/ch/21/eq/3 PEQ 1k97 +0.00 2.0
+/ch/21/eq/4 HShv 10k02 +0.00 2.0
+/ch/21/mix ON   -oo ON +0 OFF   -oo
+/ch/21/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/21/mix/02 ON   -30.0
+/ch/21/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/21/mix/04 ON   -30.0
+/ch/21/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/21/mix/06 ON   -30.0
+/ch/21/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/21/mix/08 ON   -30.0
+/ch/21/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/21/mix/10 ON   -30.0
+/ch/21/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/21/mix/12 ON   -30.0
+/ch/21/mix/13 ON   -oo +0 POST 0
+/ch/21/mix/14 ON   -oo
+/ch/21/mix/15 ON   -oo +0 POST 0
+/ch/21/mix/16 ON   -oo
+/ch/21/grp %00000000 %000000
+/ch/21/automix OFF  +0.0
+/ch/22/config "PERC 2" 1 YE 22
+/ch/22/delay OFF   0.3
+/ch/22/preamp +0.0 OFF OFF 24  20
+/ch/22/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/22/gate/filter OFF 3.0 990.9
+/ch/22/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/22/dyn/filter OFF 3.0 990.9
+/ch/22/insert OFF POST OFF
+/ch/22/eq OFF
+/ch/22/eq/1 PEQ 124.7 +0.00 2.0
+/ch/22/eq/2 PEQ 496.6 +0.00 2.0
+/ch/22/eq/3 PEQ 1k97 +0.00 2.0
+/ch/22/eq/4 HShv 10k02 +0.00 2.0
+/ch/22/mix ON   -oo ON +0 OFF   -oo
+/ch/22/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/22/mix/02 ON   -30.0
+/ch/22/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/22/mix/04 ON   -30.0
+/ch/22/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/22/mix/06 ON   -30.0
+/ch/22/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/22/mix/08 ON   -30.0
+/ch/22/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/22/mix/10 ON   -30.0
+/ch/22/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/22/mix/12 ON   -30.0
+/ch/22/mix/13 ON   -oo +0 POST 0
+/ch/22/mix/14 ON   -oo
+/ch/22/mix/15 ON   -oo +0 POST 0
+/ch/22/mix/16 ON   -oo
+/ch/22/grp %00000000 %000000
+/ch/22/automix OFF  +0.0
+/ch/23/config "SAX" 1 MG 23
+/ch/23/delay OFF   0.3
+/ch/23/preamp +0.0 OFF OFF 24  20
+/ch/23/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/23/gate/filter OFF 3.0 990.9
+/ch/23/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/23/dyn/filter OFF 3.0 990.9
+/ch/23/insert OFF POST OFF
+/ch/23/eq OFF
+/ch/23/eq/1 PEQ 124.7 +0.00 2.0
+/ch/23/eq/2 PEQ 496.6 +0.00 2.0
+/ch/23/eq/3 PEQ 1k97 +0.00 2.0
+/ch/23/eq/4 HShv 10k02 +0.00 2.0
+/ch/23/mix ON   -oo ON +0 OFF   -oo
+/ch/23/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/23/mix/02 ON   -30.0
+/ch/23/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/23/mix/04 ON   -30.0
+/ch/23/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/23/mix/06 ON   -30.0
+/ch/23/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/23/mix/08 ON   -30.0
+/ch/23/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/23/mix/10 ON   -30.0
+/ch/23/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/23/mix/12 ON   -30.0
+/ch/23/mix/13 ON   -oo +0 POST 0
+/ch/23/mix/14 ON   -oo
+/ch/23/mix/15 ON   -oo +0 POST 0
+/ch/23/mix/16 ON   -oo
+/ch/23/grp %00000000 %000000
+/ch/23/automix OFF  +0.0
+/ch/24/config "TRUMPET" 1 MG 24
+/ch/24/delay OFF   0.3
+/ch/24/preamp +0.0 OFF OFF 24  20
+/ch/24/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/24/gate/filter OFF 3.0 990.9
+/ch/24/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/24/dyn/filter OFF 3.0 990.9
+/ch/24/insert OFF POST OFF
+/ch/24/eq OFF
+/ch/24/eq/1 PEQ 124.7 +0.00 2.0
+/ch/24/eq/2 PEQ 496.6 +0.00 2.0
+/ch/24/eq/3 PEQ 1k97 +0.00 2.0
+/ch/24/eq/4 HShv 10k02 +0.00 2.0
+/ch/24/mix ON   -oo ON +0 OFF   -oo
+/ch/24/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/24/mix/02 ON   -30.0
+/ch/24/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/24/mix/04 ON   -30.0
+/ch/24/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/24/mix/06 ON   -30.0
+/ch/24/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/24/mix/08 ON   -30.0
+/ch/24/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/24/mix/10 ON   -30.0
+/ch/24/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/24/mix/12 ON   -30.0
+/ch/24/mix/13 ON   -oo +0 POST 0
+/ch/24/mix/14 ON   -oo
+/ch/24/mix/15 ON   -oo +0 POST 0
+/ch/24/mix/16 ON   -oo
+/ch/24/grp %00000000 %000000
+/ch/24/automix OFF  +0.0
+/ch/25/config "LEAD VOC" 1 WH 25
+/ch/25/delay OFF   0.3
+/ch/25/preamp +0.0 OFF OFF 24  20
+/ch/25/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/25/gate/filter OFF 3.0 990.9
+/ch/25/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/25/dyn/filter OFF 3.0 990.9
+/ch/25/insert OFF POST OFF
+/ch/25/eq OFF
+/ch/25/eq/1 PEQ 124.7 +0.00 2.0
+/ch/25/eq/2 PEQ 496.6 +0.00 2.0
+/ch/25/eq/3 PEQ 1k97 +0.00 2.0
+/ch/25/eq/4 HShv 10k02 +0.00 2.0
+/ch/25/mix ON   -oo ON +0 OFF   -oo
+/ch/25/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/25/mix/02 ON   -30.0
+/ch/25/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/25/mix/04 ON   -30.0
+/ch/25/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/25/mix/06 ON   -30.0
+/ch/25/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/25/mix/08 ON   -30.0
+/ch/25/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/25/mix/10 ON   -30.0
+/ch/25/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/25/mix/12 ON   -30.0
+/ch/25/mix/13 ON   -oo +0 POST 0
+/ch/25/mix/14 ON   -oo
+/ch/25/mix/15 ON   -oo +0 POST 0
+/ch/25/mix/16 ON   -oo
+/ch/25/grp %00000000 %000000
+/ch/25/automix OFF  +0.0
+/ch/26/config "BV 1" 1 WH 26
+/ch/26/delay OFF   0.3
+/ch/26/preamp +0.0 OFF OFF 24  20
+/ch/26/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/26/gate/filter OFF 3.0 990.9
+/ch/26/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/26/dyn/filter OFF 3.0 990.9
+/ch/26/insert OFF POST OFF
+/ch/26/eq OFF
+/ch/26/eq/1 PEQ 124.7 +0.00 2.0
+/ch/26/eq/2 PEQ 496.6 +0.00 2.0
+/ch/26/eq/3 PEQ 1k97 +0.00 2.0
+/ch/26/eq/4 HShv 10k02 +0.00 2.0
+/ch/26/mix ON   -oo ON +0 OFF   -oo
+/ch/26/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/26/mix/02 ON   -30.0
+/ch/26/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/26/mix/04 ON   -30.0
+/ch/26/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/26/mix/06 ON   -30.0
+/ch/26/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/26/mix/08 ON   -30.0
+/ch/26/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/26/mix/10 ON   -30.0
+/ch/26/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/26/mix/12 ON   -30.0
+/ch/26/mix/13 ON   -oo +0 POST 0
+/ch/26/mix/14 ON   -oo
+/ch/26/mix/15 ON   -oo +0 POST 0
+/ch/26/mix/16 ON   -oo
+/ch/26/grp %00000000 %000000
+/ch/26/automix OFF  +0.0
+/ch/27/config "BV 2" 1 WH 27
+/ch/27/delay OFF   0.3
+/ch/27/preamp +0.0 OFF OFF 24  20
+/ch/27/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/27/gate/filter OFF 3.0 990.9
+/ch/27/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/27/dyn/filter OFF 3.0 990.9
+/ch/27/insert OFF POST OFF
+/ch/27/eq OFF
+/ch/27/eq/1 PEQ 124.7 +0.00 2.0
+/ch/27/eq/2 PEQ 496.6 +0.00 2.0
+/ch/27/eq/3 PEQ 1k97 +0.00 2.0
+/ch/27/eq/4 HShv 10k02 +0.00 2.0
+/ch/27/mix ON   -oo ON +0 OFF   -oo
+/ch/27/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/27/mix/02 ON   -30.0
+/ch/27/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/27/mix/04 ON   -30.0
+/ch/27/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/27/mix/06 ON   -30.0
+/ch/27/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/27/mix/08 ON   -30.0
+/ch/27/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/27/mix/10 ON   -30.0
+/ch/27/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/27/mix/12 ON   -30.0
+/ch/27/mix/13 ON   -oo +0 POST 0
+/ch/27/mix/14 ON   -oo
+/ch/27/mix/15 ON   -oo +0 POST 0
+/ch/27/mix/16 ON   -oo
+/ch/27/grp %00000000 %000000
+/ch/27/automix OFF  +0.0
+/ch/28/config "BV 3" 1 WH 28
+/ch/28/delay OFF   0.3
+/ch/28/preamp +0.0 OFF OFF 24  20
+/ch/28/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/28/gate/filter OFF 3.0 990.9
+/ch/28/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/28/dyn/filter OFF 3.0 990.9
+/ch/28/insert OFF POST OFF
+/ch/28/eq OFF
+/ch/28/eq/1 PEQ 124.7 +0.00 2.0
+/ch/28/eq/2 PEQ 496.6 +0.00 2.0
+/ch/28/eq/3 PEQ 1k97 +0.00 2.0
+/ch/28/eq/4 HShv 10k02 +0.00 2.0
+/ch/28/mix ON   -oo ON +0 OFF   -oo
+/ch/28/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/28/mix/02 ON   -30.0
+/ch/28/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/28/mix/04 ON   -30.0
+/ch/28/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/28/mix/06 ON   -30.0
+/ch/28/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/28/mix/08 ON   -30.0
+/ch/28/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/28/mix/10 ON   -30.0
+/ch/28/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/28/mix/12 ON   -30.0
+/ch/28/mix/13 ON   -oo +0 POST 0
+/ch/28/mix/14 ON   -oo
+/ch/28/mix/15 ON   -oo +0 POST 0
+/ch/28/mix/16 ON   -oo
+/ch/28/grp %00000000 %000000
+/ch/28/automix OFF  +0.0
+/ch/29/config "TALKBACK" 1 WH 29
+/ch/29/delay OFF   0.3
+/ch/29/preamp +0.0 OFF OFF 24  20
+/ch/29/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/29/gate/filter OFF 3.0 990.9
+/ch/29/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/29/dyn/filter OFF 3.0 990.9
+/ch/29/insert OFF POST OFF
+/ch/29/eq OFF
+/ch/29/eq/1 PEQ 124.7 +0.00 2.0
+/ch/29/eq/2 PEQ 496.6 +0.00 2.0
+/ch/29/eq/3 PEQ 1k97 +0.00 2.0
+/ch/29/eq/4 HShv 10k02 +0.00 2.0
+/ch/29/mix ON   -oo ON +0 OFF   -oo
+/ch/29/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/29/mix/02 ON   -30.0
+/ch/29/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/29/mix/04 ON   -30.0
+/ch/29/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/29/mix/06 ON   -30.0
+/ch/29/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/29/mix/08 ON   -30.0
+/ch/29/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/29/mix/10 ON   -30.0
+/ch/29/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/29/mix/12 ON   -30.0
+/ch/29/mix/13 ON   -oo +0 POST 0
+/ch/29/mix/14 ON   -oo
+/ch/29/mix/15 ON   -oo +0 POST 0
+/ch/29/mix/16 ON   -oo
+/ch/29/grp %00000000 %000000
+/ch/29/automix OFF  +0.0
+/ch/30/config "SPARE 30" 1 OFF 30
+/ch/30/delay OFF   0.3
+/ch/30/preamp +0.0 OFF OFF 24  20
+/ch/30/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/30/gate/filter OFF 3.0 990.9
+/ch/30/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/30/dyn/filter OFF 3.0 990.9
+/ch/30/insert OFF POST OFF
+/ch/30/eq OFF
+/ch/30/eq/1 PEQ 124.7 +0.00 2.0
+/ch/30/eq/2 PEQ 496.6 +0.00 2.0
+/ch/30/eq/3 PEQ 1k97 +0.00 2.0
+/ch/30/eq/4 HShv 10k02 +0.00 2.0
+/ch/30/mix ON   -oo ON +0 OFF   -oo
+/ch/30/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/30/mix/02 ON   -30.0
+/ch/30/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/30/mix/04 ON   -30.0
+/ch/30/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/30/mix/06 ON   -30.0
+/ch/30/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/30/mix/08 ON   -30.0
+/ch/30/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/30/mix/10 ON   -30.0
+/ch/30/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/30/mix/12 ON   -30.0
+/ch/30/mix/13 ON   -oo +0 POST 0
+/ch/30/mix/14 ON   -oo
+/ch/30/mix/15 ON   -oo +0 POST 0
+/ch/30/mix/16 ON   -oo
+/ch/30/grp %00000000 %000000
+/ch/30/automix OFF  +0.0
+/ch/31/config "SPARE 31" 1 OFF 31
+/ch/31/delay OFF   0.3
+/ch/31/preamp +0.0 OFF OFF 24  20
+/ch/31/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/31/gate/filter OFF 3.0 990.9
+/ch/31/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/31/dyn/filter OFF 3.0 990.9
+/ch/31/insert OFF POST OFF
+/ch/31/eq OFF
+/ch/31/eq/1 PEQ 124.7 +0.00 2.0
+/ch/31/eq/2 PEQ 496.6 +0.00 2.0
+/ch/31/eq/3 PEQ 1k97 +0.00 2.0
+/ch/31/eq/4 HShv 10k02 +0.00 2.0
+/ch/31/mix ON   -oo ON +0 OFF   -oo
+/ch/31/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/31/mix/02 ON   -30.0
+/ch/31/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/31/mix/04 ON   -30.0
+/ch/31/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/31/mix/06 ON   -30.0
+/ch/31/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/31/mix/08 ON   -30.0
+/ch/31/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/31/mix/10 ON   -30.0
+/ch/31/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/31/mix/12 ON   -30.0
+/ch/31/mix/13 ON   -oo +0 POST 0
+/ch/31/mix/14 ON   -oo
+/ch/31/mix/15 ON   -oo +0 POST 0
+/ch/31/mix/16 ON   -oo
+/ch/31/grp %00000000 %000000
+/ch/31/automix OFF  +0.0
+/ch/32/config "SPARE 32" 1 OFF 32
+/ch/32/delay OFF   0.3
+/ch/32/preamp +0.0 OFF OFF 24  20
+/ch/32/gate OFF GATE -80.0 60.0 10 50.2  258 0
+/ch/32/gate/filter OFF 3.0 990.9
+/ch/32/dyn OFF COMP PEAK LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/ch/32/dyn/filter OFF 3.0 990.9
+/ch/32/insert OFF POST OFF
+/ch/32/eq OFF
+/ch/32/eq/1 PEQ 124.7 +0.00 2.0
+/ch/32/eq/2 PEQ 496.6 +0.00 2.0
+/ch/32/eq/3 PEQ 1k97 +0.00 2.0
+/ch/32/eq/4 HShv 10k02 +0.00 2.0
+/ch/32/mix ON   -oo ON +0 OFF   -oo
+/ch/32/mix/01 ON   -30.0 +0 EQ-> 0
+/ch/32/mix/02 ON   -30.0
+/ch/32/mix/03 ON   -30.0 +0 EQ-> 0
+/ch/32/mix/04 ON   -30.0
+/ch/32/mix/05 ON   -30.0 +0 EQ-> 0
+/ch/32/mix/06 ON   -30.0
+/ch/32/mix/07 ON   -30.0 +0 EQ-> 0
+/ch/32/mix/08 ON   -30.0
+/ch/32/mix/09 ON   -30.0 +0 EQ-> 0
+/ch/32/mix/10 ON   -30.0
+/ch/32/mix/11 ON   -30.0 +0 EQ-> 0
+/ch/32/mix/12 ON   -30.0
+/ch/32/mix/13 ON   -oo +0 POST 0
+/ch/32/mix/14 ON   -oo
+/ch/32/mix/15 ON   -oo +0 POST 0
+/ch/32/mix/16 ON   -oo
+/ch/32/grp %00000000 %000000
+/ch/32/automix OFF  +0.0
+/auxin/01/config "" 55 GN 33
+/auxin/01/preamp +0.0 OFF
+/auxin/01/eq OFF
+/auxin/01/eq/1 PEQ 124.7 +0.00 2.0
+/auxin/01/eq/2 PEQ 496.6 +0.00 2.0
+/auxin/01/eq/3 PEQ 1k97 +0.00 2.0
+/auxin/01/eq/4 HShv 10k02 +0.00 2.0
+/auxin/01/mix ON   -oo ON +0 OFF   -oo
+/auxin/01/mix/01 ON   -oo +0 EQ-> 0
+/auxin/01/mix/02 ON   -oo
+/auxin/01/mix/03 ON   -oo +0 EQ-> 0
+/auxin/01/mix/04 ON   -oo
+/auxin/01/mix/05 ON   -oo +0 EQ-> 0
+/auxin/01/mix/06 ON   -oo
+/auxin/01/mix/07 ON   -oo +0 EQ-> 0
+/auxin/01/mix/08 ON   -oo
+/auxin/01/mix/09 ON   -oo +0 POST 0
+/auxin/01/mix/10 ON   -oo
+/auxin/01/mix/11 ON   -oo +0 POST 0
+/auxin/01/mix/12 ON   -oo
+/auxin/01/mix/13 ON   -oo +0 POST 0
+/auxin/01/mix/14 ON   -oo
+/auxin/01/mix/15 ON   -oo +0 POST 0
+/auxin/01/mix/16 ON   -oo
+/auxin/01/grp %00000000 %000000
+/auxin/02/config "" 55 GN 34
+/auxin/02/preamp +0.0 OFF
+/auxin/02/eq OFF
+/auxin/02/eq/1 PEQ 124.7 +0.00 2.0
+/auxin/02/eq/2 PEQ 496.6 +0.00 2.0
+/auxin/02/eq/3 PEQ 1k97 +0.00 2.0
+/auxin/02/eq/4 HShv 10k02 +0.00 2.0
+/auxin/02/mix ON   -oo ON +0 OFF   -oo
+/auxin/02/mix/01 ON   -oo +0 EQ-> 0
+/auxin/02/mix/02 ON   -oo
+/auxin/02/mix/03 ON   -oo +0 EQ-> 0
+/auxin/02/mix/04 ON   -oo
+/auxin/02/mix/05 ON   -oo +0 EQ-> 0
+/auxin/02/mix/06 ON   -oo
+/auxin/02/mix/07 ON   -oo +0 EQ-> 0
+/auxin/02/mix/08 ON   -oo
+/auxin/02/mix/09 ON   -oo +0 POST 0
+/auxin/02/mix/10 ON   -oo
+/auxin/02/mix/11 ON   -oo +0 POST 0
+/auxin/02/mix/12 ON   -oo
+/auxin/02/mix/13 ON   -oo +0 POST 0
+/auxin/02/mix/14 ON   -oo
+/auxin/02/mix/15 ON   -oo +0 POST 0
+/auxin/02/mix/16 ON   -oo
+/auxin/02/grp %00000000 %000000
+/auxin/03/config "" 55 GN 35
+/auxin/03/preamp +0.0 OFF
+/auxin/03/eq OFF
+/auxin/03/eq/1 PEQ 124.7 +0.00 2.0
+/auxin/03/eq/2 PEQ 496.6 +0.00 2.0
+/auxin/03/eq/3 PEQ 1k97 +0.00 2.0
+/auxin/03/eq/4 HShv 10k02 +0.00 2.0
+/auxin/03/mix ON   -oo ON +0 OFF   -oo
+/auxin/03/mix/01 ON   -oo +0 EQ-> 0
+/auxin/03/mix/02 ON   -oo
+/auxin/03/mix/03 ON   -oo +0 EQ-> 0
+/auxin/03/mix/04 ON   -oo
+/auxin/03/mix/05 ON   -oo +0 EQ-> 0
+/auxin/03/mix/06 ON   -oo
+/auxin/03/mix/07 ON   -oo +0 EQ-> 0
+/auxin/03/mix/08 ON   -oo
+/auxin/03/mix/09 ON   -oo +0 POST 0
+/auxin/03/mix/10 ON   -oo
+/auxin/03/mix/11 ON   -oo +0 POST 0
+/auxin/03/mix/12 ON   -oo
+/auxin/03/mix/13 ON   -oo +0 POST 0
+/auxin/03/mix/14 ON   -oo
+/auxin/03/mix/15 ON   -oo +0 POST 0
+/auxin/03/mix/16 ON   -oo
+/auxin/03/grp %00000000 %000000
+/auxin/04/config "" 55 GN 36
+/auxin/04/preamp +0.0 OFF
+/auxin/04/eq OFF
+/auxin/04/eq/1 PEQ 124.7 +0.00 2.0
+/auxin/04/eq/2 PEQ 496.6 +0.00 2.0
+/auxin/04/eq/3 PEQ 1k97 +0.00 2.0
+/auxin/04/eq/4 HShv 10k02 +0.00 2.0
+/auxin/04/mix ON   -oo ON +0 OFF   -oo
+/auxin/04/mix/01 ON   -oo +0 EQ-> 0
+/auxin/04/mix/02 ON   -oo
+/auxin/04/mix/03 ON   -oo +0 EQ-> 0
+/auxin/04/mix/04 ON   -oo
+/auxin/04/mix/05 ON   -oo +0 EQ-> 0
+/auxin/04/mix/06 ON   -oo
+/auxin/04/mix/07 ON   -oo +0 EQ-> 0
+/auxin/04/mix/08 ON   -oo
+/auxin/04/mix/09 ON   -oo +0 POST 0
+/auxin/04/mix/10 ON   -oo
+/auxin/04/mix/11 ON   -oo +0 POST 0
+/auxin/04/mix/12 ON   -oo
+/auxin/04/mix/13 ON   -oo +0 POST 0
+/auxin/04/mix/14 ON   -oo
+/auxin/04/mix/15 ON   -oo +0 POST 0
+/auxin/04/mix/16 ON   -oo
+/auxin/04/grp %00000000 %000000
+/auxin/05/config "" 55 GN 37
+/auxin/05/preamp +0.0 OFF
+/auxin/05/eq OFF
+/auxin/05/eq/1 PEQ 124.7 +0.00 2.0
+/auxin/05/eq/2 PEQ 496.6 +0.00 2.0
+/auxin/05/eq/3 PEQ 1k97 +0.00 2.0
+/auxin/05/eq/4 HShv 10k02 +0.00 2.0
+/auxin/05/mix ON   -oo ON +0 OFF   -oo
+/auxin/05/mix/01 ON   -oo +0 EQ-> 0
+/auxin/05/mix/02 ON   -oo
+/auxin/05/mix/03 ON   -oo +0 EQ-> 0
+/auxin/05/mix/04 ON   -oo
+/auxin/05/mix/05 ON   -oo +0 EQ-> 0
+/auxin/05/mix/06 ON   -oo
+/auxin/05/mix/07 ON   -oo +0 EQ-> 0
+/auxin/05/mix/08 ON   -oo
+/auxin/05/mix/09 ON   -oo +0 POST 0
+/auxin/05/mix/10 ON   -oo
+/auxin/05/mix/11 ON   -oo +0 POST 0
+/auxin/05/mix/12 ON   -oo
+/auxin/05/mix/13 ON   -oo +0 POST 0
+/auxin/05/mix/14 ON   -oo
+/auxin/05/mix/15 ON   -oo +0 POST 0
+/auxin/05/mix/16 ON   -oo
+/auxin/05/grp %00000000 %000000
+/auxin/06/config "" 55 GN 38
+/auxin/06/preamp +0.0 OFF
+/auxin/06/eq OFF
+/auxin/06/eq/1 PEQ 124.7 +0.00 2.0
+/auxin/06/eq/2 PEQ 496.6 +0.00 2.0
+/auxin/06/eq/3 PEQ 1k97 +0.00 2.0
+/auxin/06/eq/4 HShv 10k02 +0.00 2.0
+/auxin/06/mix ON   -oo ON +0 OFF   -oo
+/auxin/06/mix/01 ON   -oo +0 EQ-> 0
+/auxin/06/mix/02 ON   -oo
+/auxin/06/mix/03 ON   -oo +0 EQ-> 0
+/auxin/06/mix/04 ON   -oo
+/auxin/06/mix/05 ON   -oo +0 EQ-> 0
+/auxin/06/mix/06 ON   -oo
+/auxin/06/mix/07 ON   -oo +0 EQ-> 0
+/auxin/06/mix/08 ON   -oo
+/auxin/06/mix/09 ON   -oo +0 POST 0
+/auxin/06/mix/10 ON   -oo
+/auxin/06/mix/11 ON   -oo +0 POST 0
+/auxin/06/mix/12 ON   -oo
+/auxin/06/mix/13 ON   -oo +0 POST 0
+/auxin/06/mix/14 ON   -oo
+/auxin/06/mix/15 ON   -oo +0 POST 0
+/auxin/06/mix/16 ON   -oo
+/auxin/06/grp %00000000 %000000
+/auxin/07/config "USB L" 60 YE 39
+/auxin/07/preamp +0.0 OFF
+/auxin/07/eq OFF
+/auxin/07/eq/1 PEQ 124.7 +0.00 2.0
+/auxin/07/eq/2 PEQ 496.6 +0.00 2.0
+/auxin/07/eq/3 PEQ 1k97 +0.00 2.0
+/auxin/07/eq/4 HShv 10k02 +0.00 2.0
+/auxin/07/mix ON   -oo ON -100 OFF   -oo
+/auxin/07/mix/01 ON   -oo -100 EQ-> 0
+/auxin/07/mix/02 ON   -oo
+/auxin/07/mix/03 ON   -oo -100 EQ-> 0
+/auxin/07/mix/04 ON   -oo
+/auxin/07/mix/05 ON   -oo -100 EQ-> 0
+/auxin/07/mix/06 ON   -oo
+/auxin/07/mix/07 ON   -oo -100 EQ-> 0
+/auxin/07/mix/08 ON   -oo
+/auxin/07/mix/09 ON   -oo -100 POST 0
+/auxin/07/mix/10 ON   -oo
+/auxin/07/mix/11 ON   -oo -100 POST 0
+/auxin/07/mix/12 ON   -oo
+/auxin/07/mix/13 ON   -oo -100 POST 0
+/auxin/07/mix/14 ON   -oo
+/auxin/07/mix/15 ON   -oo -100 POST 0
+/auxin/07/mix/16 ON   -oo
+/auxin/07/grp %00000000 %000000
+/auxin/08/config "USB R" 60 YE 40
+/auxin/08/preamp +0.0 OFF
+/auxin/08/eq OFF
+/auxin/08/eq/1 PEQ 124.7 +0.00 2.0
+/auxin/08/eq/2 PEQ 496.6 +0.00 2.0
+/auxin/08/eq/3 PEQ 1k97 +0.00 2.0
+/auxin/08/eq/4 HShv 10k02 +0.00 2.0
+/auxin/08/mix ON   -oo ON +100 OFF   -oo
+/auxin/08/mix/01 ON   -oo +100 EQ-> 0
+/auxin/08/mix/02 ON   -oo
+/auxin/08/mix/03 ON   -oo +100 EQ-> 0
+/auxin/08/mix/04 ON   -oo
+/auxin/08/mix/05 ON   -oo +100 EQ-> 0
+/auxin/08/mix/06 ON   -oo
+/auxin/08/mix/07 ON   -oo +100 EQ-> 0
+/auxin/08/mix/08 ON   -oo
+/auxin/08/mix/09 ON   -oo +100 POST 0
+/auxin/08/mix/10 ON   -oo
+/auxin/08/mix/11 ON   -oo +100 POST 0
+/auxin/08/mix/12 ON   -oo
+/auxin/08/mix/13 ON   -oo +100 POST 0
+/auxin/08/mix/14 ON   -oo
+/auxin/08/mix/15 ON   -oo +100 POST 0
+/auxin/08/mix/16 ON   -oo
+/auxin/08/grp %00000000 %000000
+/fxrtn/01/config "" 61 MG
+/fxrtn/01/eq OFF
+/fxrtn/01/eq/1 PEQ 124.7 +0.00 2.0
+/fxrtn/01/eq/2 PEQ 496.6 +0.00 2.0
+/fxrtn/01/eq/3 PEQ 1k97 +0.00 2.0
+/fxrtn/01/eq/4 HShv 10k02 +0.00 2.0
+/fxrtn/01/mix ON   0.0 ON -100 OFF   -oo
+/fxrtn/01/mix/01 ON   -oo -100 POST 0
+/fxrtn/01/mix/02 ON   -oo
+/fxrtn/01/mix/03 ON   -oo -100 POST 0
+/fxrtn/01/mix/04 ON   -oo
+/fxrtn/01/mix/05 ON   -oo -100 POST 0
+/fxrtn/01/mix/06 ON   -oo
+/fxrtn/01/mix/07 ON   -oo -100 POST 0
+/fxrtn/01/mix/08 ON   -oo
+/fxrtn/01/mix/09 ON   -oo -100 POST 0
+/fxrtn/01/mix/10 ON   -oo
+/fxrtn/01/mix/11 ON   -oo -100 POST 0
+/fxrtn/01/mix/12 ON   -oo
+/fxrtn/01/mix/13 ON   -oo -100 POST 0
+/fxrtn/01/mix/14 ON   -oo
+/fxrtn/01/mix/15 ON   -oo -100 POST 0
+/fxrtn/01/mix/16 ON   -oo
+/fxrtn/01/grp %00000000 %000000
+/fxrtn/02/config "" 61 MG
+/fxrtn/02/eq OFF
+/fxrtn/02/eq/1 PEQ 124.7 +0.00 2.0
+/fxrtn/02/eq/2 PEQ 496.6 +0.00 2.0
+/fxrtn/02/eq/3 PEQ 1k97 +0.00 2.0
+/fxrtn/02/eq/4 HShv 10k02 +0.00 2.0
+/fxrtn/02/mix ON   0.0 ON +100 OFF   -oo
+/fxrtn/02/mix/01 ON   -oo +100 POST 0
+/fxrtn/02/mix/02 ON   -oo
+/fxrtn/02/mix/03 ON   -oo +100 POST 0
+/fxrtn/02/mix/04 ON   -oo
+/fxrtn/02/mix/05 ON   -oo +100 POST 0
+/fxrtn/02/mix/06 ON   -oo
+/fxrtn/02/mix/07 ON   -oo +100 POST 0
+/fxrtn/02/mix/08 ON   -oo
+/fxrtn/02/mix/09 ON   -oo +100 POST 0
+/fxrtn/02/mix/10 ON   -oo
+/fxrtn/02/mix/11 ON   -oo +100 POST 0
+/fxrtn/02/mix/12 ON   -oo
+/fxrtn/02/mix/13 ON   -oo +100 POST 0
+/fxrtn/02/mix/14 ON   -oo
+/fxrtn/02/mix/15 ON   -oo +100 POST 0
+/fxrtn/02/mix/16 ON   -oo
+/fxrtn/02/grp %00000000 %000000
+/fxrtn/03/config "" 61 MG
+/fxrtn/03/eq OFF
+/fxrtn/03/eq/1 PEQ 124.7 +0.00 2.0
+/fxrtn/03/eq/2 PEQ 496.6 +0.00 2.0
+/fxrtn/03/eq/3 PEQ 1k97 +0.00 2.0
+/fxrtn/03/eq/4 HShv 10k02 +0.00 2.0
+/fxrtn/03/mix ON   0.0 ON -100 OFF   -oo
+/fxrtn/03/mix/01 ON   -oo -100 POST 0
+/fxrtn/03/mix/02 ON   -oo
+/fxrtn/03/mix/03 ON   -oo -100 POST 0
+/fxrtn/03/mix/04 ON   -oo
+/fxrtn/03/mix/05 ON   -oo -100 POST 0
+/fxrtn/03/mix/06 ON   -oo
+/fxrtn/03/mix/07 ON   -oo -100 POST 0
+/fxrtn/03/mix/08 ON   -oo
+/fxrtn/03/mix/09 ON   -oo -100 POST 0
+/fxrtn/03/mix/10 ON   -oo
+/fxrtn/03/mix/11 ON   -oo -100 POST 0
+/fxrtn/03/mix/12 ON   -oo
+/fxrtn/03/mix/13 ON   -oo -100 POST 0
+/fxrtn/03/mix/14 ON   -oo
+/fxrtn/03/mix/15 ON   -oo -100 POST 0
+/fxrtn/03/mix/16 ON   -oo
+/fxrtn/03/grp %00000000 %000000
+/fxrtn/04/config "" 61 MG
+/fxrtn/04/eq OFF
+/fxrtn/04/eq/1 PEQ 124.7 +0.00 2.0
+/fxrtn/04/eq/2 PEQ 496.6 +0.00 2.0
+/fxrtn/04/eq/3 PEQ 1k97 +0.00 2.0
+/fxrtn/04/eq/4 HShv 10k02 +0.00 2.0
+/fxrtn/04/mix ON   0.0 ON +100 OFF   -oo
+/fxrtn/04/mix/01 ON   -oo +100 POST 0
+/fxrtn/04/mix/02 ON   -oo
+/fxrtn/04/mix/03 ON   -oo +100 POST 0
+/fxrtn/04/mix/04 ON   -oo
+/fxrtn/04/mix/05 ON   -oo +100 POST 0
+/fxrtn/04/mix/06 ON   -oo
+/fxrtn/04/mix/07 ON   -oo +100 POST 0
+/fxrtn/04/mix/08 ON   -oo
+/fxrtn/04/mix/09 ON   -oo +100 POST 0
+/fxrtn/04/mix/10 ON   -oo
+/fxrtn/04/mix/11 ON   -oo +100 POST 0
+/fxrtn/04/mix/12 ON   -oo
+/fxrtn/04/mix/13 ON   -oo +100 POST 0
+/fxrtn/04/mix/14 ON   -oo
+/fxrtn/04/mix/15 ON   -oo +100 POST 0
+/fxrtn/04/mix/16 ON   -oo
+/fxrtn/04/grp %00000000 %000000
+/fxrtn/05/config "" 61 MG
+/fxrtn/05/eq OFF
+/fxrtn/05/eq/1 PEQ 124.7 +0.00 2.0
+/fxrtn/05/eq/2 PEQ 496.6 +0.00 2.0
+/fxrtn/05/eq/3 PEQ 1k97 +0.00 2.0
+/fxrtn/05/eq/4 HShv 10k02 +0.00 2.0
+/fxrtn/05/mix ON   0.0 ON -100 OFF   -oo
+/fxrtn/05/mix/01 ON   -oo -100 POST 0
+/fxrtn/05/mix/02 ON   -oo
+/fxrtn/05/mix/03 ON   -oo -100 POST 0
+/fxrtn/05/mix/04 ON   -oo
+/fxrtn/05/mix/05 ON   -oo -100 POST 0
+/fxrtn/05/mix/06 ON   -oo
+/fxrtn/05/mix/07 ON   -oo -100 POST 0
+/fxrtn/05/mix/08 ON   -oo
+/fxrtn/05/mix/09 ON   -oo -100 POST 0
+/fxrtn/05/mix/10 ON   -oo
+/fxrtn/05/mix/11 ON   -oo -100 POST 0
+/fxrtn/05/mix/12 ON   -oo
+/fxrtn/05/mix/13 ON   -oo -100 POST 0
+/fxrtn/05/mix/14 ON   -oo
+/fxrtn/05/mix/15 ON   -oo -100 POST 0
+/fxrtn/05/mix/16 ON   -oo
+/fxrtn/05/grp %00000000 %000000
+/fxrtn/06/config "" 61 MG
+/fxrtn/06/eq OFF
+/fxrtn/06/eq/1 PEQ 124.7 +0.00 2.0
+/fxrtn/06/eq/2 PEQ 496.6 +0.00 2.0
+/fxrtn/06/eq/3 PEQ 1k97 +0.00 2.0
+/fxrtn/06/eq/4 HShv 10k02 +0.00 2.0
+/fxrtn/06/mix ON   0.0 ON +100 OFF   -oo
+/fxrtn/06/mix/01 ON   -oo +100 POST 0
+/fxrtn/06/mix/02 ON   -oo
+/fxrtn/06/mix/03 ON   -oo +100 POST 0
+/fxrtn/06/mix/04 ON   -oo
+/fxrtn/06/mix/05 ON   -oo +100 POST 0
+/fxrtn/06/mix/06 ON   -oo
+/fxrtn/06/mix/07 ON   -oo +100 POST 0
+/fxrtn/06/mix/08 ON   -oo
+/fxrtn/06/mix/09 ON   -oo +100 POST 0
+/fxrtn/06/mix/10 ON   -oo
+/fxrtn/06/mix/11 ON   -oo +100 POST 0
+/fxrtn/06/mix/12 ON   -oo
+/fxrtn/06/mix/13 ON   -oo +100 POST 0
+/fxrtn/06/mix/14 ON   -oo
+/fxrtn/06/mix/15 ON   -oo +100 POST 0
+/fxrtn/06/mix/16 ON   -oo
+/fxrtn/06/grp %00000000 %000000
+/fxrtn/07/config "" 61 MG
+/fxrtn/07/eq OFF
+/fxrtn/07/eq/1 PEQ 124.7 +0.00 2.0
+/fxrtn/07/eq/2 PEQ 496.6 +0.00 2.0
+/fxrtn/07/eq/3 PEQ 1k97 +0.00 2.0
+/fxrtn/07/eq/4 HShv 10k02 +0.00 2.0
+/fxrtn/07/mix ON   0.0 ON -100 OFF   -oo
+/fxrtn/07/mix/01 ON   -oo -100 POST 0
+/fxrtn/07/mix/02 ON   -oo
+/fxrtn/07/mix/03 ON   -oo -100 POST 0
+/fxrtn/07/mix/04 ON   -oo
+/fxrtn/07/mix/05 ON   -oo -100 POST 0
+/fxrtn/07/mix/06 ON   -oo
+/fxrtn/07/mix/07 ON   -oo -100 POST 0
+/fxrtn/07/mix/08 ON   -oo
+/fxrtn/07/mix/09 ON   -oo -100 POST 0
+/fxrtn/07/mix/10 ON   -oo
+/fxrtn/07/mix/11 ON   -oo -100 POST 0
+/fxrtn/07/mix/12 ON   -oo
+/fxrtn/07/mix/13 ON   -oo -100 POST 0
+/fxrtn/07/mix/14 ON   -oo
+/fxrtn/07/mix/15 ON   -oo -100 POST 0
+/fxrtn/07/mix/16 ON   -oo
+/fxrtn/07/grp %00000000 %000000
+/fxrtn/08/config "" 61 MG
+/fxrtn/08/eq OFF
+/fxrtn/08/eq/1 PEQ 124.7 +0.00 2.0
+/fxrtn/08/eq/2 PEQ 496.6 +0.00 2.0
+/fxrtn/08/eq/3 PEQ 1k97 +0.00 2.0
+/fxrtn/08/eq/4 HShv 10k02 +0.00 2.0
+/fxrtn/08/mix ON   0.0 ON +100 OFF   -oo
+/fxrtn/08/mix/01 ON   -oo +100 POST 0
+/fxrtn/08/mix/02 ON   -oo
+/fxrtn/08/mix/03 ON   -oo +100 POST 0
+/fxrtn/08/mix/04 ON   -oo
+/fxrtn/08/mix/05 ON   -oo +100 POST 0
+/fxrtn/08/mix/06 ON   -oo
+/fxrtn/08/mix/07 ON   -oo +100 POST 0
+/fxrtn/08/mix/08 ON   -oo
+/fxrtn/08/mix/09 ON   -oo +100 POST 0
+/fxrtn/08/mix/10 ON   -oo
+/fxrtn/08/mix/11 ON   -oo +100 POST 0
+/fxrtn/08/mix/12 ON   -oo
+/fxrtn/08/mix/13 ON   -oo +100 POST 0
+/fxrtn/08/mix/14 ON   -oo
+/fxrtn/08/mix/15 ON   -oo +100 POST 0
+/fxrtn/08/mix/16 ON   -oo
+/fxrtn/08/grp %00000000 %000000
+/bus/01/config "IEM1 L" 71 BL
+/bus/01/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/01/dyn/filter OFF 3.0 990.9
+/bus/01/insert OFF PRE OFF
+/bus/01/eq OFF
+/bus/01/eq/1 LShv 79.6 +0.00 2.0
+/bus/01/eq/2 PEQ 158.9 +0.00 2.0
+/bus/01/eq/3 PEQ 496.6 +0.00 2.0
+/bus/01/eq/4 PEQ 1k97 +0.00 2.0
+/bus/01/eq/5 PEQ 5k02 +0.00 2.0
+/bus/01/eq/6 HShv 10k02 +0.00 2.0
+/bus/01/mix ON   -oo OFF +0 OFF   -oo
+/bus/01/mix/01 ON   -oo +0 POST 0
+/bus/01/mix/02 ON   -oo
+/bus/01/mix/03 ON   -oo +0 POST 0
+/bus/01/mix/04 ON   -oo
+/bus/01/mix/05 ON   -oo +0 POST 0
+/bus/01/mix/06 ON   -oo
+/bus/01/grp %00000000 %000000
+/bus/02/config "IEM1 R" 71 BL
+/bus/02/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/02/dyn/filter OFF 3.0 990.9
+/bus/02/insert OFF PRE OFF
+/bus/02/eq OFF
+/bus/02/eq/1 LShv 79.6 +0.00 2.0
+/bus/02/eq/2 PEQ 158.9 +0.00 2.0
+/bus/02/eq/3 PEQ 496.6 +0.00 2.0
+/bus/02/eq/4 PEQ 1k97 +0.00 2.0
+/bus/02/eq/5 PEQ 5k02 +0.00 2.0
+/bus/02/eq/6 HShv 10k02 +0.00 2.0
+/bus/02/mix ON   -oo OFF +0 OFF   -oo
+/bus/02/mix/01 ON   -oo +0 POST 0
+/bus/02/mix/02 ON   -oo
+/bus/02/mix/03 ON   -oo +0 POST 0
+/bus/02/mix/04 ON   -oo
+/bus/02/mix/05 ON   -oo +0 POST 0
+/bus/02/mix/06 ON   -oo
+/bus/02/grp %00000000 %000000
+/bus/03/config "IEM2 L" 71 BL
+/bus/03/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/03/dyn/filter OFF 3.0 990.9
+/bus/03/insert OFF PRE OFF
+/bus/03/eq OFF
+/bus/03/eq/1 LShv 79.6 +0.00 2.0
+/bus/03/eq/2 PEQ 158.9 +0.00 2.0
+/bus/03/eq/3 PEQ 496.6 +0.00 2.0
+/bus/03/eq/4 PEQ 1k97 +0.00 2.0
+/bus/03/eq/5 PEQ 5k02 +0.00 2.0
+/bus/03/eq/6 HShv 10k02 +0.00 2.0
+/bus/03/mix ON   -oo OFF +0 OFF   -oo
+/bus/03/mix/01 ON   -oo +0 POST 0
+/bus/03/mix/02 ON   -oo
+/bus/03/mix/03 ON   -oo +0 POST 0
+/bus/03/mix/04 ON   -oo
+/bus/03/mix/05 ON   -oo +0 POST 0
+/bus/03/mix/06 ON   -oo
+/bus/03/grp %00000000 %000000
+/bus/04/config "IEM2 R" 71 BL
+/bus/04/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/04/dyn/filter OFF 3.0 990.9
+/bus/04/insert OFF PRE OFF
+/bus/04/eq OFF
+/bus/04/eq/1 LShv 79.6 +0.00 2.0
+/bus/04/eq/2 PEQ 158.9 +0.00 2.0
+/bus/04/eq/3 PEQ 496.6 +0.00 2.0
+/bus/04/eq/4 PEQ 1k97 +0.00 2.0
+/bus/04/eq/5 PEQ 5k02 +0.00 2.0
+/bus/04/eq/6 HShv 10k02 +0.00 2.0
+/bus/04/mix ON   -oo OFF +0 OFF   -oo
+/bus/04/mix/01 ON   -oo +0 POST 0
+/bus/04/mix/02 ON   -oo
+/bus/04/mix/03 ON   -oo +0 POST 0
+/bus/04/mix/04 ON   -oo
+/bus/04/mix/05 ON   -oo +0 POST 0
+/bus/04/mix/06 ON   -oo
+/bus/04/grp %00000000 %000000
+/bus/05/config "IEM3 L" 71 BL
+/bus/05/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/05/dyn/filter OFF 3.0 990.9
+/bus/05/insert OFF PRE OFF
+/bus/05/eq OFF
+/bus/05/eq/1 LShv 79.6 +0.00 2.0
+/bus/05/eq/2 PEQ 158.9 +0.00 2.0
+/bus/05/eq/3 PEQ 496.6 +0.00 2.0
+/bus/05/eq/4 PEQ 1k97 +0.00 2.0
+/bus/05/eq/5 PEQ 5k02 +0.00 2.0
+/bus/05/eq/6 HShv 10k02 +0.00 2.0
+/bus/05/mix ON   -oo OFF +0 OFF   -oo
+/bus/05/mix/01 ON   -oo +0 POST 0
+/bus/05/mix/02 ON   -oo
+/bus/05/mix/03 ON   -oo +0 POST 0
+/bus/05/mix/04 ON   -oo
+/bus/05/mix/05 ON   -oo +0 POST 0
+/bus/05/mix/06 ON   -oo
+/bus/05/grp %00000000 %000000
+/bus/06/config "IEM3 R" 71 BL
+/bus/06/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/06/dyn/filter OFF 3.0 990.9
+/bus/06/insert OFF PRE OFF
+/bus/06/eq OFF
+/bus/06/eq/1 LShv 79.6 +0.00 2.0
+/bus/06/eq/2 PEQ 158.9 +0.00 2.0
+/bus/06/eq/3 PEQ 496.6 +0.00 2.0
+/bus/06/eq/4 PEQ 1k97 +0.00 2.0
+/bus/06/eq/5 PEQ 5k02 +0.00 2.0
+/bus/06/eq/6 HShv 10k02 +0.00 2.0
+/bus/06/mix ON   -oo OFF +0 OFF   -oo
+/bus/06/mix/01 ON   -oo +0 POST 0
+/bus/06/mix/02 ON   -oo
+/bus/06/mix/03 ON   -oo +0 POST 0
+/bus/06/mix/04 ON   -oo
+/bus/06/mix/05 ON   -oo +0 POST 0
+/bus/06/mix/06 ON   -oo
+/bus/06/grp %00000000 %000000
+/bus/07/config "IEM4 L" 71 BL
+/bus/07/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/07/dyn/filter OFF 3.0 990.9
+/bus/07/insert OFF PRE OFF
+/bus/07/eq OFF
+/bus/07/eq/1 LShv 79.6 +0.00 2.0
+/bus/07/eq/2 PEQ 158.9 +0.00 2.0
+/bus/07/eq/3 PEQ 496.6 +0.00 2.0
+/bus/07/eq/4 PEQ 1k97 +0.00 2.0
+/bus/07/eq/5 PEQ 5k02 +0.00 2.0
+/bus/07/eq/6 HShv 10k02 +0.00 2.0
+/bus/07/mix ON   -oo OFF +0 OFF   -oo
+/bus/07/mix/01 ON   -oo +0 POST 0
+/bus/07/mix/02 ON   -oo
+/bus/07/mix/03 ON   -oo +0 POST 0
+/bus/07/mix/04 ON   -oo
+/bus/07/mix/05 ON   -oo +0 POST 0
+/bus/07/mix/06 ON   -oo
+/bus/07/grp %00000000 %000000
+/bus/08/config "IEM4 R" 71 BL
+/bus/08/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/08/dyn/filter OFF 3.0 990.9
+/bus/08/insert OFF PRE OFF
+/bus/08/eq OFF
+/bus/08/eq/1 LShv 79.6 +0.00 2.0
+/bus/08/eq/2 PEQ 158.9 +0.00 2.0
+/bus/08/eq/3 PEQ 496.6 +0.00 2.0
+/bus/08/eq/4 PEQ 1k97 +0.00 2.0
+/bus/08/eq/5 PEQ 5k02 +0.00 2.0
+/bus/08/eq/6 HShv 10k02 +0.00 2.0
+/bus/08/mix ON   -oo OFF +0 OFF   -oo
+/bus/08/mix/01 ON   -oo +0 POST 0
+/bus/08/mix/02 ON   -oo
+/bus/08/mix/03 ON   -oo +0 POST 0
+/bus/08/mix/04 ON   -oo
+/bus/08/mix/05 ON   -oo +0 POST 0
+/bus/08/mix/06 ON   -oo
+/bus/08/grp %00000000 %000000
+/bus/09/config "IEM5 L" 71 BL
+/bus/09/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/09/dyn/filter OFF 3.0 990.9
+/bus/09/insert OFF PRE OFF
+/bus/09/eq OFF
+/bus/09/eq/1 LShv 79.6 +0.00 2.0
+/bus/09/eq/2 PEQ 158.9 +0.00 2.0
+/bus/09/eq/3 PEQ 496.6 +0.00 2.0
+/bus/09/eq/4 PEQ 1k97 +0.00 2.0
+/bus/09/eq/5 PEQ 5k02 +0.00 2.0
+/bus/09/eq/6 HShv 10k02 +0.00 2.0
+/bus/09/mix ON   -oo OFF +0 OFF   -oo
+/bus/09/mix/01 ON   -oo +0 POST 0
+/bus/09/mix/02 ON   -oo
+/bus/09/mix/03 ON   -oo +0 POST 0
+/bus/09/mix/04 ON   -oo
+/bus/09/mix/05 ON   -oo +0 POST 0
+/bus/09/mix/06 ON   -oo
+/bus/09/grp %00000000 %000000
+/bus/10/config "IEM5 R" 71 BL
+/bus/10/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/10/dyn/filter OFF 3.0 990.9
+/bus/10/insert OFF PRE OFF
+/bus/10/eq OFF
+/bus/10/eq/1 LShv 79.6 +0.00 2.0
+/bus/10/eq/2 PEQ 158.9 +0.00 2.0
+/bus/10/eq/3 PEQ 496.6 +0.00 2.0
+/bus/10/eq/4 PEQ 1k97 +0.00 2.0
+/bus/10/eq/5 PEQ 5k02 +0.00 2.0
+/bus/10/eq/6 HShv 10k02 +0.00 2.0
+/bus/10/mix ON   -oo OFF +0 OFF   -oo
+/bus/10/mix/01 ON   -oo +0 POST 0
+/bus/10/mix/02 ON   -oo
+/bus/10/mix/03 ON   -oo +0 POST 0
+/bus/10/mix/04 ON   -oo
+/bus/10/mix/05 ON   -oo +0 POST 0
+/bus/10/mix/06 ON   -oo
+/bus/10/grp %00000000 %000000
+/bus/11/config "IEM6 L" 71 BL
+/bus/11/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/11/dyn/filter OFF 3.0 990.9
+/bus/11/insert OFF PRE OFF
+/bus/11/eq OFF
+/bus/11/eq/1 LShv 79.6 +0.00 2.0
+/bus/11/eq/2 PEQ 158.9 +0.00 2.0
+/bus/11/eq/3 PEQ 496.6 +0.00 2.0
+/bus/11/eq/4 PEQ 1k97 +0.00 2.0
+/bus/11/eq/5 PEQ 5k02 +0.00 2.0
+/bus/11/eq/6 HShv 10k02 +0.00 2.0
+/bus/11/mix ON   -oo OFF +0 OFF   -oo
+/bus/11/mix/01 ON   -oo +0 POST 0
+/bus/11/mix/02 ON   -oo
+/bus/11/mix/03 ON   -oo +0 POST 0
+/bus/11/mix/04 ON   -oo
+/bus/11/mix/05 ON   -oo +0 POST 0
+/bus/11/mix/06 ON   -oo
+/bus/11/grp %00000000 %000000
+/bus/12/config "IEM6 R" 71 BL
+/bus/12/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/12/dyn/filter OFF 3.0 990.9
+/bus/12/insert OFF PRE OFF
+/bus/12/eq OFF
+/bus/12/eq/1 LShv 79.6 +0.00 2.0
+/bus/12/eq/2 PEQ 158.9 +0.00 2.0
+/bus/12/eq/3 PEQ 496.6 +0.00 2.0
+/bus/12/eq/4 PEQ 1k97 +0.00 2.0
+/bus/12/eq/5 PEQ 5k02 +0.00 2.0
+/bus/12/eq/6 HShv 10k02 +0.00 2.0
+/bus/12/mix ON   -oo OFF +0 OFF   -oo
+/bus/12/mix/01 ON   -oo +0 POST 0
+/bus/12/mix/02 ON   -oo
+/bus/12/mix/03 ON   -oo +0 POST 0
+/bus/12/mix/04 ON   -oo
+/bus/12/mix/05 ON   -oo +0 POST 0
+/bus/12/mix/06 ON   -oo
+/bus/12/grp %00000000 %000000
+/bus/13/config "Fx 1" 71 MG
+/bus/13/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/13/dyn/filter OFF 3.0 990.9
+/bus/13/insert OFF PRE OFF
+/bus/13/eq OFF
+/bus/13/eq/1 LShv 79.6 +0.00 2.0
+/bus/13/eq/2 PEQ 158.9 +0.00 2.0
+/bus/13/eq/3 PEQ 496.6 +0.00 2.0
+/bus/13/eq/4 PEQ 1k97 +0.00 2.0
+/bus/13/eq/5 PEQ 5k02 +0.00 2.0
+/bus/13/eq/6 HShv 10k02 +0.00 2.0
+/bus/13/mix ON   0.0 OFF +0 OFF   -oo
+/bus/13/mix/01 ON   -oo +0 POST 0
+/bus/13/mix/02 ON   -oo
+/bus/13/mix/03 ON   -oo +0 POST 0
+/bus/13/mix/04 ON   -oo
+/bus/13/mix/05 ON   -oo +0 POST 0
+/bus/13/mix/06 ON   -oo
+/bus/13/grp %00000000 %000000
+/bus/14/config "Fx 2" 71 MG
+/bus/14/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/14/dyn/filter OFF 3.0 990.9
+/bus/14/insert OFF PRE OFF
+/bus/14/eq OFF
+/bus/14/eq/1 LShv 79.6 +0.00 2.0
+/bus/14/eq/2 PEQ 158.9 +0.00 2.0
+/bus/14/eq/3 PEQ 496.6 +0.00 2.0
+/bus/14/eq/4 PEQ 1k97 +0.00 2.0
+/bus/14/eq/5 PEQ 5k02 +0.00 2.0
+/bus/14/eq/6 HShv 10k02 +0.00 2.0
+/bus/14/mix ON   0.0 OFF +0 OFF   -oo
+/bus/14/mix/01 ON   -oo +0 POST 0
+/bus/14/mix/02 ON   -oo
+/bus/14/mix/03 ON   -oo +0 POST 0
+/bus/14/mix/04 ON   -oo
+/bus/14/mix/05 ON   -oo +0 POST 0
+/bus/14/mix/06 ON   -oo
+/bus/14/grp %00000000 %000000
+/bus/15/config "Fx 3" 71 MG
+/bus/15/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/15/dyn/filter OFF 3.0 990.9
+/bus/15/insert OFF PRE OFF
+/bus/15/eq OFF
+/bus/15/eq/1 LShv 79.6 +0.00 2.0
+/bus/15/eq/2 PEQ 158.9 +0.00 2.0
+/bus/15/eq/3 PEQ 496.6 +0.00 2.0
+/bus/15/eq/4 PEQ 1k97 +0.00 2.0
+/bus/15/eq/5 PEQ 5k02 +0.00 2.0
+/bus/15/eq/6 HShv 10k02 +0.00 2.0
+/bus/15/mix ON   0.0 OFF +0 OFF   -oo
+/bus/15/mix/01 ON   -oo +0 POST 0
+/bus/15/mix/02 ON   -oo
+/bus/15/mix/03 ON   -oo +0 POST 0
+/bus/15/mix/04 ON   -oo
+/bus/15/mix/05 ON   -oo +0 POST 0
+/bus/15/mix/06 ON   -oo
+/bus/15/grp %00000000 %000000
+/bus/16/config "Fx 4" 71 MG
+/bus/16/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 0 100 OFF
+/bus/16/dyn/filter OFF 3.0 990.9
+/bus/16/insert OFF PRE OFF
+/bus/16/eq OFF
+/bus/16/eq/1 LShv 79.6 +0.00 2.0
+/bus/16/eq/2 PEQ 158.9 +0.00 2.0
+/bus/16/eq/3 PEQ 496.6 +0.00 2.0
+/bus/16/eq/4 PEQ 1k97 +0.00 2.0
+/bus/16/eq/5 PEQ 5k02 +0.00 2.0
+/bus/16/eq/6 HShv 10k02 +0.00 2.0
+/bus/16/mix ON   0.0 OFF +0 OFF   -oo
+/bus/16/mix/01 ON   -oo +0 POST 0
+/bus/16/mix/02 ON   -oo
+/bus/16/mix/03 ON   -oo +0 POST 0
+/bus/16/mix/04 ON   -oo
+/bus/16/mix/05 ON   -oo +0 POST 0
+/bus/16/mix/06 ON   -oo
+/bus/16/grp %00000000 %000000
+/mtx/01/config "" 72 MG
+/mtx/01/preamp OFF
+/mtx/01/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 100 OFF
+/mtx/01/dyn/filter OFF 3.0 990.9
+/mtx/01/insert OFF PRE OFF
+/mtx/01/eq OFF
+/mtx/01/eq/1 LShv 79.6 +0.00 2.0
+/mtx/01/eq/2 PEQ 158.9 +0.00 2.0
+/mtx/01/eq/3 PEQ 496.6 +0.00 2.0
+/mtx/01/eq/4 PEQ 1k97 +0.00 2.0
+/mtx/01/eq/5 PEQ 5k02 +0.00 2.0
+/mtx/01/eq/6 HShv 10k02 +0.00 2.0
+/mtx/01/mix ON   -oo
+/mtx/01/grp %00000000 %000000
+/mtx/02/config "" 72 MG
+/mtx/02/preamp OFF
+/mtx/02/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 100 OFF
+/mtx/02/dyn/filter OFF 3.0 990.9
+/mtx/02/insert OFF PRE OFF
+/mtx/02/eq OFF
+/mtx/02/eq/1 LShv 79.6 +0.00 2.0
+/mtx/02/eq/2 PEQ 158.9 +0.00 2.0
+/mtx/02/eq/3 PEQ 496.6 +0.00 2.0
+/mtx/02/eq/4 PEQ 1k97 +0.00 2.0
+/mtx/02/eq/5 PEQ 5k02 +0.00 2.0
+/mtx/02/eq/6 HShv 10k02 +0.00 2.0
+/mtx/02/mix ON   -oo
+/mtx/02/grp %00000000 %000000
+/mtx/03/config "" 72 MG
+/mtx/03/preamp OFF
+/mtx/03/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 100 OFF
+/mtx/03/dyn/filter OFF 3.0 990.9
+/mtx/03/insert OFF PRE OFF
+/mtx/03/eq OFF
+/mtx/03/eq/1 LShv 79.6 +0.00 2.0
+/mtx/03/eq/2 PEQ 158.9 +0.00 2.0
+/mtx/03/eq/3 PEQ 496.6 +0.00 2.0
+/mtx/03/eq/4 PEQ 1k97 +0.00 2.0
+/mtx/03/eq/5 PEQ 5k02 +0.00 2.0
+/mtx/03/eq/6 HShv 10k02 +0.00 2.0
+/mtx/03/mix ON   -oo
+/mtx/03/grp %00000000 %000000
+/mtx/04/config "" 72 MG
+/mtx/04/preamp OFF
+/mtx/04/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 100 OFF
+/mtx/04/dyn/filter OFF 3.0 990.9
+/mtx/04/insert OFF PRE OFF
+/mtx/04/eq OFF
+/mtx/04/eq/1 LShv 79.6 +0.00 2.0
+/mtx/04/eq/2 PEQ 158.9 +0.00 2.0
+/mtx/04/eq/3 PEQ 496.6 +0.00 2.0
+/mtx/04/eq/4 PEQ 1k97 +0.00 2.0
+/mtx/04/eq/5 PEQ 5k02 +0.00 2.0
+/mtx/04/eq/6 HShv 10k02 +0.00 2.0
+/mtx/04/mix ON   -oo
+/mtx/04/grp %00000000 %000000
+/mtx/05/config "" 72 MG
+/mtx/05/preamp OFF
+/mtx/05/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 100 OFF
+/mtx/05/dyn/filter OFF 3.0 990.9
+/mtx/05/insert OFF PRE OFF
+/mtx/05/eq OFF
+/mtx/05/eq/1 LShv 79.6 +0.00 2.0
+/mtx/05/eq/2 PEQ 158.9 +0.00 2.0
+/mtx/05/eq/3 PEQ 496.6 +0.00 2.0
+/mtx/05/eq/4 PEQ 1k97 +0.00 2.0
+/mtx/05/eq/5 PEQ 5k02 +0.00 2.0
+/mtx/05/eq/6 HShv 10k02 +0.00 2.0
+/mtx/05/mix ON   -oo
+/mtx/05/grp %00000000 %000000
+/mtx/06/config "" 72 MG
+/mtx/06/preamp OFF
+/mtx/06/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 100 OFF
+/mtx/06/dyn/filter OFF 3.0 990.9
+/mtx/06/insert OFF PRE OFF
+/mtx/06/eq OFF
+/mtx/06/eq/1 LShv 79.6 +0.00 2.0
+/mtx/06/eq/2 PEQ 158.9 +0.00 2.0
+/mtx/06/eq/3 PEQ 496.6 +0.00 2.0
+/mtx/06/eq/4 PEQ 1k97 +0.00 2.0
+/mtx/06/eq/5 PEQ 5k02 +0.00 2.0
+/mtx/06/eq/6 HShv 10k02 +0.00 2.0
+/mtx/06/mix ON   -oo
+/mtx/06/grp %00000000 %000000
+/main/st/config "" 66 WH
+/main/st/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 100 OFF
+/main/st/dyn/filter OFF 3.0 990.9
+/main/st/insert OFF PRE OFF
+/main/st/eq OFF
+/main/st/eq/1 LShv 79.6 +0.00 2.0
+/main/st/eq/2 PEQ 158.9 +0.00 2.0
+/main/st/eq/3 PEQ 496.6 +0.00 2.0
+/main/st/eq/4 PEQ 1k97 +0.00 2.0
+/main/st/eq/5 PEQ 5k02 +0.00 2.0
+/main/st/eq/6 HShv 10k02 +0.00 2.0
+/main/st/mix ON   -oo +0
+/main/st/mix/01 ON   -oo +0 POST 0
+/main/st/mix/02 ON   -oo
+/main/st/mix/03 ON   -oo +0 POST 0
+/main/st/mix/04 ON   -oo
+/main/st/mix/05 ON   -oo +0 POST 0
+/main/st/mix/06 ON   -oo
+/main/st/grp %00000000 %000000
+/main/m/config "" 67 WH
+/main/m/dyn OFF COMP RMS LOG 0.0 3.0 1 0.00 10 10.0  151 POST 100 OFF
+/main/m/dyn/filter OFF 3.0 990.9
+/main/m/insert OFF PRE OFF
+/main/m/eq OFF
+/main/m/eq/1 LShv 79.6 +0.00 2.0
+/main/m/eq/2 PEQ 158.9 +0.00 2.0
+/main/m/eq/3 PEQ 496.6 +0.00 2.0
+/main/m/eq/4 PEQ 1k97 +0.00 2.0
+/main/m/eq/5 PEQ 5k02 +0.00 2.0
+/main/m/eq/6 HShv 10k02 +0.00 2.0
+/main/m/mix ON   -oo
+/main/m/mix/01 ON   -oo +0 POST 0
+/main/m/mix/02 ON   -oo
+/main/m/mix/03 ON   -oo +0 POST 0
+/main/m/mix/04 ON   -oo
+/main/m/mix/05 ON   -oo +0 POST 0
+/main/m/mix/06 ON   -oo
+/main/m/grp %00000000 %000000
+/dca/1 ON   0.0
+/dca/1/config "DCA 1" 70 WH
+/dca/2 ON   0.0
+/dca/2/config "DCA 2" 70 WH
+/dca/3 ON   0.0
+/dca/3/config "DCA 3" 70 WH
+/dca/4 ON   0.0
+/dca/4/config "DCA 4" 70 WH
+/dca/5 ON   0.0
+/dca/5/config "DCA 5" 70 WH
+/dca/6 ON   0.0
+/dca/6/config "DCA 6" 70 WH
+/dca/7 ON   0.0
+/dca/7/config "DCA 7" 70 WH
+/dca/8 ON   0.0
+/dca/8/config "DCA 8" 70 WH
+/fx/1 VRM
+/fx/1/source MIX13 MIX13
+/fx/1/par 20 1.94 24 30 22 0.0 1.10 0.69 97 10k4 28 34 OFF 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+/fx/2 HALL
+/fx/2/source MIX14 MIX14
+/fx/2/par 20 1.57 60 5k74 25 0.0 83 7k2 0.95 25 50 30 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+/fx/3 DLY
+/fx/3/source MIX15 MIX15
+/fx/3/par 100 223 ST 1 1 13 10 20k0 97 30 30 20k0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+/fx/4 CRS
+/fx/4/source MIX16 MIX16
+/fx/4/par 0.50 15 15 19.9 19.9 100 97 15k1 120 100 85 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+/fx/5 GEQ2
+/fx/5/par 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+/fx/6 GEQ2
+/fx/6/par 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+/fx/7 GEQ2
+/fx/7/par 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+/fx/8 GEQ
+/fx/8/par 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+/outputs/main/01 4 POST OFF
+/outputs/main/01/delay OFF   0.3
+/outputs/main/02 5 POST OFF
+/outputs/main/02/delay OFF   0.3
+/outputs/main/03 6 POST OFF
+/outputs/main/03/delay OFF   0.3
+/outputs/main/04 7 POST OFF
+/outputs/main/04/delay OFF   0.3
+/outputs/main/05 8 POST OFF
+/outputs/main/05/delay OFF   0.3
+/outputs/main/06 9 POST OFF
+/outputs/main/06/delay OFF   0.3
+/outputs/main/07 10 POST OFF
+/outputs/main/07/delay OFF   0.3
+/outputs/main/08 11 POST OFF
+/outputs/main/08/delay OFF   0.3
+/outputs/main/09 12 POST OFF
+/outputs/main/09/delay OFF   0.3
+/outputs/main/10 13 POST OFF
+/outputs/main/10/delay OFF   0.3
+/outputs/main/11 14 POST OFF
+/outputs/main/11/delay OFF   0.3
+/outputs/main/12 15 POST OFF
+/outputs/main/12/delay OFF   0.3
+/outputs/main/13 16 POST OFF
+/outputs/main/13/delay OFF   0.3
+/outputs/main/14 17 POST OFF
+/outputs/main/14/delay OFF   0.3
+/outputs/main/15 1 POST OFF
+/outputs/main/15/delay OFF   0.3
+/outputs/main/16 2 POST OFF
+/outputs/main/16/delay OFF   0.3
+/outputs/aux/01 0 POST OFF
+/outputs/aux/02 0 POST OFF
+/outputs/aux/03 0 POST OFF
+/outputs/aux/04 0 POST OFF
+/outputs/aux/05 0 POST OFF
+/outputs/aux/06 0 POST OFF
+/outputs/p16/01 26 <-EQ OFF
+/outputs/p16/01/iQ OFF none Linear 0
+/outputs/p16/02 27 <-EQ OFF
+/outputs/p16/02/iQ OFF none Linear 0
+/outputs/p16/03 28 <-EQ OFF
+/outputs/p16/03/iQ OFF none Linear 0
+/outputs/p16/04 29 <-EQ OFF
+/outputs/p16/04/iQ OFF none Linear 0
+/outputs/p16/05 30 <-EQ OFF
+/outputs/p16/05/iQ OFF none Linear 0
+/outputs/p16/06 31 <-EQ OFF
+/outputs/p16/06/iQ OFF none Linear 0
+/outputs/p16/07 32 <-EQ OFF
+/outputs/p16/07/iQ OFF none Linear 0
+/outputs/p16/08 33 <-EQ OFF
+/outputs/p16/08/iQ OFF none Linear 0
+/outputs/p16/09 34 <-EQ OFF
+/outputs/p16/09/iQ OFF none Linear 0
+/outputs/p16/10 35 <-EQ OFF
+/outputs/p16/10/iQ OFF none Linear 0
+/outputs/p16/11 36 <-EQ OFF
+/outputs/p16/11/iQ OFF none Linear 0
+/outputs/p16/12 37 <-EQ OFF
+/outputs/p16/12/iQ OFF none Linear 0
+/outputs/p16/13 38 <-EQ OFF
+/outputs/p16/13/iQ OFF none Linear 0
+/outputs/p16/14 39 <-EQ OFF
+/outputs/p16/14/iQ OFF none Linear 0
+/outputs/p16/15 40 <-EQ OFF
+/outputs/p16/15/iQ OFF none Linear 0
+/outputs/p16/16 41 <-EQ OFF
+/outputs/p16/16/iQ OFF none Linear 0
+/outputs/aes/01 1 POST OFF
+/outputs/aes/02 2 POST OFF
+/outputs/rec/01 1 <-EQ
+/outputs/rec/02 2 <-EQ
+/headamp/000 +0.0 OFF
+/headamp/001 +0.0 OFF
+/headamp/002 +0.0 OFF
+/headamp/003 +0.0 OFF
+/headamp/004 +0.0 OFF
+/headamp/005 +0.0 OFF
+/headamp/006 +0.0 OFF
+/headamp/007 +0.0 OFF
+/headamp/008 +0.0 OFF
+/headamp/009 +0.0 OFF
+/headamp/010 +0.0 OFF
+/headamp/011 +0.0 OFF
+/headamp/012 +0.0 OFF
+/headamp/013 +0.0 OFF
+/headamp/014 +0.0 OFF
+/headamp/015 +0.0 OFF
+/headamp/016 +0.0 OFF
+/headamp/017 +0.0 OFF
+/headamp/018 +0.0 OFF
+/headamp/019 +0.0 OFF
+/headamp/020 +0.0 OFF
+/headamp/021 +0.0 OFF
+/headamp/022 +0.0 OFF
+/headamp/023 +0.0 OFF
+/headamp/024 +0.0 OFF
+/headamp/025 +0.0 OFF
+/headamp/026 +0.0 OFF
+/headamp/027 +0.0 OFF
+/headamp/028 +0.0 OFF
+/headamp/029 +0.0 OFF
+/headamp/030 +0.0 OFF
+/headamp/031 +0.0 OFF
+/headamp/032 +0.0 OFF
+/headamp/033 +0.0 OFF
+/headamp/034 +0.0 OFF
+/headamp/035 +0.0 OFF
+/headamp/036 +0.0 OFF
+/headamp/037 +0.0 OFF
+/headamp/038 +0.0 OFF
+/headamp/039 +0.0 OFF
+/headamp/040 +0.0 OFF
+/headamp/041 +0.0 OFF
+/headamp/042 +0.0 OFF
+/headamp/043 +0.0 OFF
+/headamp/044 +0.0 OFF
+/headamp/045 +0.0 OFF
+/headamp/046 +0.0 OFF
+/headamp/047 +0.0 OFF
+/headamp/048 +0.0 OFF
+/headamp/049 +0.0 OFF
+/headamp/050 +0.0 OFF
+/headamp/051 +0.0 OFF
+/headamp/052 +0.0 OFF
+/headamp/053 +0.0 OFF
+/headamp/054 +0.0 OFF
+/headamp/055 +0.0 OFF
+/headamp/056 +0.0 OFF
+/headamp/057 +0.0 OFF
+/headamp/058 +0.0 OFF
+/headamp/059 +0.0 OFF
+/headamp/060 +0.0 OFF
+/headamp/061 +0.0 OFF
+/headamp/062 +0.0 OFF
+/headamp/063 +0.0 OFF
+/headamp/064 +0.0 OFF
+/headamp/065 +0.0 OFF
+/headamp/066 +0.0 OFF
+/headamp/067 +0.0 OFF
+/headamp/068 +0.0 OFF
+/headamp/069 +0.0 OFF
+/headamp/070 +0.0 OFF
+/headamp/071 +0.0 OFF
+/headamp/072 +0.0 OFF
+/headamp/073 +0.0 OFF
+/headamp/074 +0.0 OFF
+/headamp/075 +0.0 OFF
+/headamp/076 +0.0 OFF
+/headamp/077 +0.0 OFF
+/headamp/078 +0.0 OFF
+/headamp/079 +0.0 OFF
+/headamp/080 +0.0 OFF
+/headamp/081 +0.0 OFF
+/headamp/082 +0.0 OFF
+/headamp/083 +0.0 OFF
+/headamp/084 +0.0 OFF
+/headamp/085 +0.0 OFF
+/headamp/086 +0.0 OFF
+/headamp/087 +0.0 OFF
+/headamp/088 +0.0 OFF
+/headamp/089 +0.0 OFF
+/headamp/090 +0.0 OFF
+/headamp/091 +0.0 OFF
+/headamp/092 +0.0 OFF
+/headamp/093 +0.0 OFF
+/headamp/094 +0.0 OFF
+/headamp/095 +0.0 OFF
+/headamp/096 +0.0 OFF
+/headamp/097 +0.0 OFF
+/headamp/098 +0.0 OFF
+/headamp/099 +0.0 OFF
+/headamp/100 +0.0 OFF
+/headamp/101 +0.0 OFF
+/headamp/102 +0.0 OFF
+/headamp/103 +0.0 OFF
+/headamp/104 +0.0 OFF
+/headamp/105 +0.0 OFF
+/headamp/106 +0.0 OFF
+/headamp/107 +0.0 OFF
+/headamp/108 +0.0 OFF
+/headamp/109 +0.0 OFF
+/headamp/110 +0.0 OFF
+/headamp/111 +0.0 OFF
+/headamp/112 +0.0 OFF
+/headamp/113 +0.0 OFF
+/headamp/114 +0.0 OFF
+/headamp/115 +0.0 OFF
+/headamp/116 +0.0 OFF
+/headamp/117 +0.0 OFF
+/headamp/118 +0.0 OFF
+/headamp/119 +0.0 OFF
+/headamp/120 +0.0 OFF
+/headamp/121 +0.0 OFF
+/headamp/122 +0.0 OFF
+/headamp/123 +0.0 OFF
+/headamp/124 +0.0 OFF
+/headamp/125 +0.0 OFF
+/headamp/126 +0.0 OFF
+/headamp/127 +0.0 OFF
+</script>
+<script>
+const byId = id => document.getElementById(id);
+const groups = [
+  {name:'DRUM', color:'Red', dca:1, odd:9, match:/\b(kick|snare|sd|hh|hi[ -]?hat|hat|tom|floor|oh|overhead|ride|drum|perc)\b/i},
+  {name:'BASS', color:'Yellow', dca:2, match:/\bbass\b/i},
+  {name:'GTR', color:'Green', dca:3, odd:11, match:/\b(gtr|guitar|gitar|acoustic)\b/i},
+  {name:'KEY', color:'Cyan', dca:4, odd:13, match:/\b(keys?|keyboard|piano|synth)\b/i},
+  {name:'VOX', color:'Magenta', dca:5, odd:15, match:/\b(vox|vocal|vokal|bgv|vocs?|vcls?)\b/i},
+  {name:'PLAYBACK', color:'Blue', dca:6, match:/\b(playback|track|tracks|sequencer|seq)\b/i}
+];
+const colors = ['Off','Red','Green','Yellow','Blue','Magenta','Cyan','White'];
+const pairs = groups.filter(group => group.odd);
+let rows = [];
+const overrides = new Map();
+
+const twoDigits = number => String(number).padStart(2,'0');
+const label12 = name => Array.from(name).slice(0,12).join('');
+const isMonitor = () => byId('mixing-role').value === 'monitor';
+const pairStart = number => number % 2 ? number : number - 1;
+const clipName = name => '"' + String(name).replace(/[\u0000-\u001f"\\]/g,' ').trim() + '"';
+const patches = {LOCAL:[0,32],AN:[0,32],AES50A:[32,48],A:[32,48],AES50B:[80,48],B:[80,48],CARD:[128,32],AUX:[160,6]};
+const colorCodes = {Off:'OFF',Red:'RD',Green:'GN',Yellow:'YE',Blue:'BL',Magenta:'MG',Cyan:'CY',White:'WH'};
+const sceneBase = document.getElementById('scene-base').textContent.trimEnd() + '\n';
+let plan;
+
+function readPatch(value) {
+  if (!value) return null;
+  if (/^off$/i.test(value)) return 0;
+  const match = value.toUpperCase().replace(/[\s-]/g,'').match(/^([A-Z0-9]+?)(\d+)$/);
+  const bank = match && patches[match[1]];
+  const port = match && Number(match[2]);
+  return bank && port >= 1 && port <= bank[1] ? bank[0] + port : undefined;
+}
+
+function parseRoutingRows(source, section, transform, errors) {
+  return source.split(/\r\n?|\n/).flatMap((line,index) => {
+    if (!line.trim()) return [];
+    const cols = line.trim().split(/\t|\|/).map(field => field.trim());
+    const prefix = cols[0].match(/^(?:(?:mix\s*bus|bus|out(?:put)?)\s*)?(\d{1,2})(?:\s*[-–]\s*(\d{1,2}))?(?:(?:[.)]\s*| +)(.+))?$/i);
+    if (/^(?:no\.?|mix\s*bus|bus|out(?:put)?|nomor)$/i.test(cols[0]) && cols.length >= 2) return [];
+    const fields = prefix?.[3] ? [prefix[3].trim(),...cols.slice(1)] : cols.slice(1);
+    const start = Number(prefix?.[1]);
+    const end = Number(prefix?.[2] ?? start);
+    const rowError = message => errors.push(section + ' baris ' + (index + 1) + ' — ' + message);
+    if (!prefix || start < 1 || start > 16 || end > 16 || fields.length > 2 || !fields[0]) {
+      rowError('Cek nomor 1–16 dan isi kolom.');
+      return [];
+    }
+    const row = transform({start,end,fields,rowError});
+    return row ? [row] : [];
+  });
+}
+
+function parseBuses(source, monitor, errors) {
+  const raw = parseRoutingRows(source,'Mix Bus',({start,end,fields,rowError}) => {
+    const mode = (fields[1] || (monitor ? 'PRE' : 'POST')).toUpperCase();
+    if (!['GRP','POST','PRE'].includes(mode) || (monitor && mode === 'GRP')) {
+      rowError(monitor ? 'Gunakan PRE atau POST.' : 'Gunakan GRP, POST, atau PRE.');
+      return;
+    }
+    if (end !== start && (start % 2 === 0 || end !== start + 1)) {
+      rowError('Link bus harus memakai pasangan ganjil–genap, misalnya 9-10.');
+      return;
+    }
+    return {start,end,name:fields[0],mode};
+  },errors);
+  const used = new Set();
+  const pairModes = new Map();
+  for (const bus of raw) {
+    for (let n = bus.start; n <= bus.end; n++) {
+      if (used.has(n)) errors.push('Mix Bus ' + n + ' terisi dua kali.');
+      used.add(n);
+    }
+    const pair = pairStart(bus.start);
+    if (pairModes.has(pair) && pairModes.get(pair) !== bus.mode) {
+      errors.push('Mix Bus ' + pair + '–' + (pair + 1) + ' harus memakai mode kirim yang sama.');
+    }
+    pairModes.set(pair,bus.mode);
+  }
+  return raw.sort((a,b) => a.start - b.start);
+}
+
+function parseOutputs(source, errors) {
+  const fixed = {'MAIN L':1,'MAIN R':2,'MAIN M/C':3,'M/C':3,'OFF':0};
+  const labels = {1:'Main L',2:'Main R',3:'Main M/C',0:'OFF'};
+  const taps = ['POST','PRE','PRE+M','EQ->','EQ->+M','<-EQ','<-EQ+M','IN/LC','IN/LC+M'];
+  const used = new Set();
+  return parseRoutingRows(source,'Output Patch',({start,end,fields,rowError}) => {
+    const signal = fields[0].toUpperCase().replace(/\s+/g,' ');
+    const sourceMatch = signal.match(/^(?:MIX\s*)?(BUS|MTX|MATRIX)\s*(\d{1,2})$/);
+    const bus = sourceMatch?.[1] === 'BUS';
+    const number = Number(sourceMatch?.[2]);
+    const id = sourceMatch && number >= 1 && number <= (bus ? 16 : 6) ? number + (bus ? 3 : 19) : fixed[signal];
+    const tap = (fields[1] || 'POST').toUpperCase();
+    if (start !== end || used.has(start) || !Number.isInteger(id) || !taps.includes(tap)) {
+      rowError('Gunakan satu nomor unik, sumber Main L/R, Bus 1–16, Matrix 1–6 atau OFF, dan tap yang valid.');
+      return;
+    }
+    used.add(start);
+    return {start,id,tap,label:labels[id] ?? (bus ? 'Bus ' : 'Matrix ') + number};
+  },errors).sort((a,b) => a.start - b.start);
+}
+
+function busLabel(bus) {
+  return bus.start + (bus.end === bus.start ? '' : '–' + bus.end) + ' ' + bus.name;
+}
+
+
+function stereoSuffix(name) {
+  const match = name.trim().match(/^(.*?)(?:[\s_-]+|\s*[\[(])(left|right|l|r)[\])]?\s*$/i);
+  return match && {name:match[1].trim(),side:match[2][0].toUpperCase()};
+}
+function stereoStarts(items, number, name, compatible = () => true) {
+  const byNumber = new Map(items.map(item=>[number(item),item]));
+  return new Set(items.filter(left=>{
+    const start = number(left);
+    const right = byNumber.get(start+1);
+    if (start % 2 !== 1 || !right) return false;
+    const leftName = stereoSuffix(name(left));
+    const rightName = stereoSuffix(name(right));
+    return leftName?.side === 'L' && rightName?.side === 'R'
+      && leftName.name.toLowerCase() === rightName.name.toLowerCase()
+      && compatible(left,right);
+  }).map(number));
+}
+const inputLabelForLink = row => row.label === label12(row.name) ? row.name : row.label;
+const manualInputLinks = {foh:new Map(),monitor:new Map()};
+function inputStereoStarts(rows,manual = new Map()) {
+  const links = stereoStarts(rows,row=>row.ch,inputLabelForLink);
+  const channels = new Set(rows.map(row=>row.ch));
+  for (const [left,mode] of manual) {
+    if (!channels.has(left) || !channels.has(left+1)) continue;
+    if (mode === 'on') links.add(left);
+    else if (mode === 'off') links.delete(left);
+  }
+  return links;
+}
+function linkedInputSource(row, links, byChannel) {
+  if (row && links.has(pairStart(row.ch))) return byChannel.get(pairStart(row.ch)) ?? row;
+  return row;
+}
+function busStereoStarts(buses) {
+  const mono = buses.filter(bus=>bus.start === bus.end);
+  const links = stereoStarts(mono,bus=>bus.start,bus=>bus.name,(left,right)=>left.mode===right.mode);
+  for (const bus of buses) if (bus.end > bus.start) links.add(bus.start);
+  return links;
+}
+
+
+const monitorDcaNames = ['Drum','Bass','Gitar','Keys','Seq','All','Vox','FX'];
+const fxReturnLabels = Array.from({length:8},(_,i)=>'FX '+(Math.floor(i/2)+1)+(i%2 ? ' R' : ' L'));
+function monitorDcaForRow(row) {
+  if (row.monitorDca !== undefined) return row.monitorDca;
+  const name = inputLabelForLink(row);
+  if (/\b(talk[\s-]?back|tb|click|metronome)\b/i.test(name)) return 0;
+  if (/\b(voc|vox|vocal|vokal|bgv|vocs?|vcls?|headset)\b/i.test(name)) return 7;
+  if (/\b(rd|rhodes|organ)\b/i.test(name)) return 4;
+  if (/\b(hi[\s-]?hat|hihat|cymbal)\b/i.test(name)) return 1;
+  const group = groups.find(item=>item.match.test(name));
+  return ({1:1,2:2,3:3,4:4,6:5})[group?.dca] || 0;
+}
+function inputDcaNumbers(row,monitor) {
+  const primary = monitor ? monitorDcaForRow(row) : row.dca;
+  if (!primary) return [];
+  return monitor && primary <= 5 ? [primary,6] : [primary];
+}
+function dcaMask(numbers) {
+  return '%' + numbers.reduce((mask,number)=>mask | (1 << (number-1)),0).toString(2).padStart(8,'0');
+}
+function dcaOptions(monitor) {
+  if (!monitor) return [[0,'Tanpa DCA'],...groups.map(group=>[group.dca,group.dca+' '+group.name])];
+  return [[0,'Tanpa DCA'],...[1,2,3,4,5,7].map(number=>[number,number+' '+monitorDcaNames[number-1]])];
+}
+function inputDcaSelect(row,monitor) {
+  const current = monitor ? {...row,monitorDca:monitorDcaForRow(row)} : row;
+  return edit(current,monitor ? 'monitorDca' : 'dca',dcaOptions(monitor),'DCA');
+}
+function renderDcaConfirmation(rows,monitor) {
+  if (currentStep !== 4) return;
+  const groupsBody = byId('dca-groups');
+  const channelsBody = byId('dca-channels');
+  groupsBody.replaceChildren();
+  channelsBody.replaceChildren();
+  byId('dca-description').textContent = monitor
+    ? 'DCA 6 All mengikuti Drum, Bass, Gitar, Keys, dan Seq. DCA 8 berisi return FX 1–4 (L/R).'
+    : 'Cek anggota DCA sebelum melanjutkan.';
+  const members = new Map();
+  const byChannel = new Map(rows.map(row=>[row.ch,row]));
+  for (const row of rows) {
+    const tr = channelsBody.insertRow();
+    cell(tr,twoDigits(row.ch));
+    cell(tr,row.label);
+    const source = linkedInputSource(row,plan.inputLinks,byChannel);
+    const select = inputDcaSelect(source,monitor);
+    select.disabled = source !== row;
+    cell(tr,select);
+    for (const number of inputDcaNumbers(source,monitor)) {
+      if (!members.has(number)) members.set(number,[]);
+      members.get(number).push(twoDigits(row.ch)+' '+row.label);
+    }
+  }
+  const template = monitor ? monitorDcaNames.map((name,i)=>[i+1,name]) : groups.map(group=>[group.dca,group.name]);
+  for (const [number,name] of template) {
+    const tr = groupsBody.insertRow();
+    cell(tr,number);
+    cell(tr,name);
+    const labels = monitor && number === 8 ? fxReturnLabels : members.get(number);
+    cell(tr,labels?.join(', ') || '—');
+  }
+}
+
+function configureScene(base, {rows,buses,outputs,show,monitor,sendModes = new Map(),inputLinks = inputStereoStarts(rows),mainFader = '-oo'}) {
+  const lines = base.split(/\r?\n/);
+  const index = new Map();
+  for (const [number, line] of lines.entries()) {
+    if (line.startsWith('/')) index.set(line.split(/\s/,1)[0],number);
+  }
+  const get = key => {
+    if (!index.has(key)) throw new Error('Scene dasar tidak punya ' + key + '.');
+    return lines[index.get(key)].match(/"[^"]*"|\S+/g).slice(1);
+  };
+  const write = (key,tokens) => { lines[index.get(key)] = key + ' ' + tokens.join(' '); };
+  const editTokens = (key,values) => {
+    const tokens = get(key);
+    for (const [position,value] of Object.entries(values)) tokens[position] = value;
+    write(key,tokens);
+  };
+  const busLinks = busStereoStarts(buses);
+  editTokens('/main/st/mix',{1:mainFader});
+  write('/config/chlink',get('/config/chlink').map((_,i)=>inputLinks.has(i*2+1) ? 'ON' : 'OFF'));
+  const rowMap = new Map(rows.map(row => [row.ch,row]));
+  const routing = get('/config/routing/IN');
+  const existingUserIn = get('/config/userrout/in');
+  const userIn = existingUserIn.slice();
+  for (let slot = 0; slot < 32; slot++) {
+    const block = routing[Math.floor(slot / 8)];
+    const blockSource = block.match(/^(AN|A|B|CARD|UIN)(\d+)-\d+$/);
+    if (!blockSource) throw new Error('Blok input scene dasar tidak dikenali.');
+    const row = rowMap.get(slot + 1);
+    const existing = blockSource[1] === 'UIN'
+      ? Number(existingUserIn[Number(blockSource[2]) - 1 + slot % 8])
+      : readPatch(blockSource[1] + (Number(blockSource[2]) + slot % 8));
+    userIn[slot] = row?.patchEdit ? readPatch(row.patchEdit) : existing;
+  }
+  if (rows.some(row => row.patchEdit)) {
+    write('/config/userrout/in',userIn);
+    write('/config/routing/IN',['UIN1-8','UIN9-16','UIN17-24','UIN25-32',routing[4]]);
+    editTokens('/config/routing',{0:'REC'});
+  }
+  const dcaNames = new Map(monitor ? monitorDcaNames.map((name,i)=>[i+1,name]) : []);
+  for (let ch = 1; ch <= 32; ch++) {
+    const row = rowMap.get(ch);
+    const prefix = '/ch/' + twoDigits(ch);
+    if (!row) {
+      if (monitor) editTokens(prefix + '/grp',{0:dcaMask([])});
+      editTokens(prefix + '/config',{0:'""',2:'OFF'});
+      editTokens(prefix + '/mix',{0:'OFF',1:'-oo',2:'OFF'});
+      continue;
+    }
+    editTokens(prefix + '/config',{0:clipName(label12(row.label)),2:colorCodes[row.color],3:row.patchEdit ? row.ch : get(prefix + '/config')[3]});
+    const source = linkedInputSource(row,inputLinks,rowMap);
+    const level = inputFaders(source,monitor).main ?? get(prefix + '/mix')[1];
+    const linked = inputLinks.has(pairStart(ch));
+    const pan = linked ? (ch % 2 ? '-100' : '+100') : {L:'-100',C:'+0',R:'+100'}[row.pan];
+    editTokens(prefix + '/mix',{1:level,2:source.bus || monitor ? 'OFF' : 'ON',3:pan,4:'OFF'});
+    editTokens(prefix + '/grp',{0:dcaMask(inputDcaNumbers(source,monitor))});
+    if (!monitor && source.dca) dcaNames.set(source.dca,groups.find(group => group.dca === source.dca).name);
+  }
+  for (const [dca,name] of dcaNames) editTokens('/dca/' + dca + '/config',{0:clipName(name)});
+  if (monitor) {
+    for (const [i] of fxReturnLabels.entries()) editTokens('/fxrtn/' + twoDigits(i+1) + '/grp',{0:dcaMask([8])});
+  }
+  const links = get('/config/buslink');
+  const configured = new Map();
+  for (const bus of buses) {
+    const pair = pairStart(bus.start);
+    links[(pair - 1) / 2] = busLinks.has(pair) ? 'ON' : 'OFF';
+    for (let number = bus.start; number <= bus.end; number++) {
+      configured.set(number,bus);
+      const prefix = '/bus/' + twoDigits(number);
+      const stereoSuffix = bus.end > bus.start ? (number === bus.start ? ' L' : ' R') : '';
+      editTokens(prefix + '/config',{0:clipName(label12(bus.name).slice(0,12-stereoSuffix.length) + stereoSuffix)});
+      editTokens(prefix + '/mix',{2:bus.mode === 'GRP' ? 'ON' : 'OFF',3:busLinks.has(pair) ? (number % 2 ? '-100' : '+100') : '+0'});
+    }
+  }
+  if (buses.length) write('/config/buslink',links);
+  const sendBuses = mixerSendBuses(buses,links);
+  const sources = [['ch',32],['auxin',8],['fxrtn',8]];
+  const configuredPairs = new Set([...configured.keys()].map(pairStart).concat([...sendModes.keys()]));
+  for (const [kind,count] of sources) {
+    for (let number = 1; number <= count; number++) {
+      const row = kind === 'ch' ? rowMap.get(number) : undefined;
+      const sendRow = linkedInputSource(row,inputLinks,rowMap);
+      for (const [busNumber,bus] of configured) {
+        const selected = bus.mode === 'GRP' && sendRow?.bus > 0 && (busLinks.has(pairStart(busNumber))
+          ? pairStart(sendRow.bus) === pairStart(busNumber) : sendRow.bus === bus.start);
+        const enabled = selected || Boolean(row && bus.mode !== 'GRP');
+        const slot = '/'+kind+'/'+twoDigits(number)+'/mix/'+twoDigits(busNumber);
+        const tokens = get(slot);
+        tokens[0] = enabled ? 'ON' : 'OFF';
+        tokens[1] = selected ? '0.0' : '-oo';
+        write(slot,tokens);
+      }
+      if (sendRow) {
+        for (const bus of sendBuses) {
+          const level = inputFaders(sendRow,monitor).sends?.[bus.start];
+          if (level === undefined) continue;
+          for (let target=bus.start;target<=bus.end;target++) {
+            const slot = '/ch/'+twoDigits(number)+'/mix/'+twoDigits(target);
+            editTokens(slot,{1:level});
+          }
+        }
+      }
+      const channelTaps = customSendTaps(sendRow,monitor);
+      const follows = customPanFollows(sendRow,monitor);
+      const followPairs = Object.keys(follows).map(Number)
+        .filter(pair=>links[(pair-1)/2] === 'ON');
+      const channelPairs = new Set([...configuredPairs,...Object.keys(channelTaps).map(Number),...followPairs]);
+      for (const pair of channelPairs) {
+        const bus = configured.get(pair) ?? configured.get(pair+1);
+        const path = '/'+kind+'/'+twoDigits(number)+'/mix/'+twoDigits(pair);
+        const tokens = get(path);
+        tokens[3] = bus?.mode === 'GRP' ? 'GRP' : channelTaps[pair] ?? bus?.mode ?? sendModes.get(pair) ?? tokens[3];
+        if (bus?.mode === 'GRP' && busLinks.has(pair) && sendRow?.bus > 0 && pairStart(sendRow.bus) === pair) {
+          tokens[2] = inputLinks.has(pairStart(row.ch)) ? (row.ch % 2 ? '-100' : '+100') : {L:'-100',C:'+0',R:'+100'}[row.pan];
+        }
+        if (followPairs.includes(pair)) tokens[4] = follows[pair] ? '1' : '0';
+        write(path,tokens);
+      }
+    }
+  }
+  for (const output of outputs) editTokens('/outputs/main/' + twoDigits(output.start),{0:output.id,1:output.tap});
+  if (show) lines[0] = lines[0].replace(/^(\#\d+\.\d+\#\s+)"[^"]*"/,(_,header) => header + clipName(label12(show)));
+  return lines.join('\n');
+}
+
+function download(contents, type, extension) {
+  const url = URL.createObjectURL(new Blob([contents],{type}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = (byId('show').value.trim().replace(/[^\p{L}\p{N} _-]+/gu,'-') || 'M32-Show') + '.' + extension;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url),30000);
+}
+
+function parse(source, activeGroups) {
+  const records = [];
+  const reserved = new Set();
+  const errors = [];
+  source.split(/\r\n?|\n/).forEach((line, index) => {
+    const value = line.trim();
+    if (!value) return;
+    const columns = value.split(/\t|\|/).map(part => part.trim());
+    if (/^(ch|channel|no\.?|nomor)$/i.test(columns[0]) && /^(nama|name|input|source)( channel)?$/i.test(columns[1] || '')) return;
+    const numbered = columns[0].match(/^(?:ch\s*)?(\d+)(?:\s*[.)-]\s*|\s+|$)(.*)$/i);
+    const separateNumber = numbered && !numbered[2];
+    const name = separateNumber ? columns[1] : numbered ? numbered[2] : columns[0];
+    const patch = columns[separateNumber ? 2 : 1] || '';
+    const ch = numbered ? Number(numbered[1]) : null;
+    if (!name || columns.length > (separateNumber ? 3 : 2) || (ch !== null && (ch < 1 || ch > 32 || reserved.has(ch)))) {
+      errors.push('Baris ' + (index + 1) + ' — cek nama, kolom, atau nomor CH 1–32 yang ganda.');
+      return;
+    }
+    if (ch !== null) reserved.add(ch);
+    records.push({ch, name, patch, line:index + 1});
+  });
+  let next = 1;
+  const parsed = [];
+  for (const record of records) {
+    if (record.ch === null) {
+      while (reserved.has(next)) next++;
+      if (next > 32) {
+        errors.push('Baris ' + record.line + ' — semua 32 channel sudah terisi.');
+        continue;
+      }
+      record.ch = next++;
+    }
+    const group = groups.find(option => option.match.test(record.name));
+    const pan = record.name.match(/(?:^|[\s_(-])(left|right|l|r)\)?$/i)?.[1].toUpperCase()[0] || 'C';
+    const subgroup = group && activeGroups.find(bus => bus.group === group);
+    const row = {...record, color:group?.color || 'Off', pan, bus:subgroup?.start || 0, dca:group?.dca || 0, confirmed:Boolean(group)};
+    parsed.push({...row, ...overrides.get(rowKey(row))});
+  }
+  return {parsed:parsed.sort((a,b) => a.ch - b.ch), errors};
+}
+const rowKey = row => JSON.stringify([row.ch, row.name, row.patch]);
+function cell(tr, content) {
+  const td = tr.insertCell();
+  if (content instanceof HTMLElement) td.append(content);
+  else td.textContent = content;
+  return td;
+}
+function edit(row, field, options, label) {
+  const control = document.createElement(options ? 'select' : 'input');
+  control.setAttribute('aria-label', label + ' CH ' + row.ch);
+  if (options) for (const [value, title] of options) control.add(new Option(title, value));
+  control.value = row[field];
+  if (field === 'label') {
+    control.className = 'name';
+    control.maxLength = 12;
+  }
+  if (field === 'patchEdit') control.placeholder = 'Ikuti scene';
+  control.addEventListener('change', () => {
+    const value = typeof row[field] === 'number' ? Number(control.value) : control.value.trim();
+    overrides.set(rowKey(row), {...overrides.get(rowKey(row)), [field]:value});
+    render();
+  });
+  return control;
+}
+function channelReviewButton(row) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.textContent = 'Konfirmasi';
+  button.title = 'Nama belum dikenali. Periksa pengaturan channel sebelum konfirmasi.';
+  button.setAttribute('aria-label','Konfirmasi CH ' + twoDigits(row.ch) + ' ' + row.label);
+  button.onclick = () => {
+    overrides.set(rowKey(row), {...overrides.get(rowKey(row)), confirmed:true});
+    render();
+  };
+  return button;
+}
+function render() {
+  const errors = [];
+  const monitor = isMonitor();
+  const busSource = byId('mixbus-list').value;
+  byId('foh-default').style.display = monitor || busSource.trim() ? 'none' : '';
+  byId('bus-help').textContent = monitor
+    ? 'Format nomor | nama | mode. Contoh 1-2 | IEM Vokal | PRE. Mode kosong memakai PRE. Rentang ganjil–genap membuat bus stereo.'
+    : 'Format nomor | nama | mode. Contoh 9-10 | DRUM | GRP atau 13 | Reverb | POST. Mode kosong memakai POST. Nama DRUM, BASS, GTR, KEY, VOX, atau PLAYBACK menentukan subgroup otomatis.';
+  byId('mixbus-list').placeholder = monitor ? '1-2 | IEM Vokal | PRE\n3 | Wedge Drum | PRE' : '9-10 | DRUM | GRP\n13 | Reverb | POST';
+  const buses = parseBuses(busSource,monitor,errors);
+  if (!monitor && !busSource.trim() && byId('mode').value === 'group') {
+    for (const pair of pairs) buses.push({start:pair.odd,end:pair.odd+1,name:pair.name,mode:'GRP'});
+  }
+  const outputs = parseOutputs(byId('output-list').value,errors);
+  const subgroups = buses.filter(bus => bus.mode === 'GRP')
+    .map(bus => ({...bus,group:groups.find(group => group.name === bus.name.toUpperCase() || group.match.test(bus.name))}));
+  const subgroupNumbers = new Set(subgroups.map(bus => bus.start));
+  const {parsed, errors:inputErrors} = parse(byId('list').value,subgroups);
+  errors.push(...inputErrors);
+  rows = parsed.map(row => ({
+    label:label12(row.name),patchEdit:row.patch,...row,bus:subgroupNumbers.has(row.bus) ? row.bus : 0
+  }));
+  const role = monitor ? 'monitor' : 'foh';
+  const inputLinks = inputStereoStarts(rows,manualInputLinks[role]);
+  plan = {rows,buses,outputs,monitor,inputLinks,sendModes:new Map(extraSendModes[role]),mainFader:faderSetups[role].main};
+  const tbody = byId('rows');
+  tbody.replaceChildren();
+  const byChannel = new Map(rows.map(row=>[row.ch,row]));
+  for (const row of rows) {
+    const source = linkedInputSource(row,inputLinks,byChannel);
+    const linked = inputLinks.has(pairStart(row.ch));
+    const tr = tbody.insertRow();
+    cell(tr, String(row.ch).padStart(2,'0'));
+    cell(tr, edit(row,'label',null,'Nama'));
+    cell(tr, edit(row,'patchEdit',null,'Patch'));
+    cell(tr, edit(row,'color',colors.map(color => [color,color]),'Warna'));
+    const pan = edit(linked ? {...row,pan:row.ch % 2 ? 'L' : 'R'} : row,'pan',[['L','L'],['C','C'],['R','R']],'Pan');
+    pan.disabled = linked;
+    cell(tr,pan);
+    const subgroup = edit(source,'bus',[[0,'—'],...subgroups.map(bus => [bus.start,busLabel(bus)])],'Subgroup');
+    subgroup.disabled = monitor || source !== row;
+    cell(tr,subgroup);
+    const dca = inputDcaSelect(source,monitor);
+    dca.disabled = source !== row;
+    cell(tr,dca);
+    cell(tr, source.bus || monitor ? 'OFF' : 'ON');
+    cell(tr,row.confirmed ? 'OK' : channelReviewButton(row));
+    if (!row.label) errors.push('CH ' + row.ch + ' perlu nama channel.');
+    if (readPatch(row.patchEdit) === undefined) errors.push('CH ' + row.ch + ' — patch tidak dikenali. Contoh AES50-A 15 atau Local 9.');
+  }
+  const review = rows.filter(row => !row.confirmed).length;
+  byId('status').textContent = rows.length ? rows.length + ' channel · ' + review + ' perlu review' : 'Daftar channel akan muncul di sini.';
+  const errorList = byId('errors');
+  errorList.replaceChildren(...errors.map(error => Object.assign(document.createElement('li'),{textContent:error})));
+  errorList.hidden = currentStep !== 3 || !editingIO || !errors.length;
+  renderRouting('buses','Mix Bus',buses.map(bus => busLabel(bus) + ' · ' + bus.mode));
+  renderRouting('outputs','Output Patch',outputs.map(output => {
+    const number = output.id - 3;
+    const bus = buses.find(bus => bus.start <= number && number <= bus.end);
+    return 'Out ' + output.start + ' · ' + output.label + (bus ? ' (' + bus.name + ')' : '') + ' · ' + output.tap;
+  }));
+  byId('export').disabled = !rows.length || Boolean(errors.length || review);
+  if (!monitor && !byId('output-list').value.trim() && currentStep === stepTitles.length) errors.push('Isi minimal satu Output Patch FOH di Edit I/O.');
+  byId('scene-export').disabled = !rows.length || Boolean(errors.length || review);
+  renderWizardPlan(rows,buses,outputs,errors);
+}
+function renderRouting(id,title,labels) {
+  const target = byId(id);
+  target.replaceChildren();
+  if (!labels.length) return;
+  const heading = document.createElement('h3');
+  heading.textContent = title;
+  const list = document.createElement('ul');
+  for (const label of labels) {
+    const item = document.createElement('li');
+    item.textContent = label;
+    list.append(item);
+  }
+  target.append(heading,list);
+}
+const pasteHelp = byId('paste-help');
+const pasteHint = pasteHelp.textContent;
+const listInput = byId('list');
+listInput.addEventListener('input', () => {
+  pasteHelp.textContent = pasteHint;
+  render();
+});
+byId('paste').addEventListener('click', async () => {
+  try {
+    const copied = await navigator.clipboard.readText();
+    if (!copied.trim()) {
+      pasteHelp.textContent = 'Salin input list terlebih dahulu, lalu ketuk Tempel input list.';
+      return;
+    }
+    listInput.setRangeText(copied, listInput.selectionStart, listInput.selectionEnd, 'end');
+    listInput.dispatchEvent(new Event('input'));
+  } catch {
+    listInput.focus();
+    pasteHelp.textContent = 'Browser membatasi akses clipboard. Ketuk dan tahan di kolom, lalu pilih Tempel, atau buka file TXT/TSV.';
+  }
+});
+const inputFile = byId('input-file');
+byId('import').onclick = () => inputFile.click();
+inputFile.addEventListener('change', async () => {
+  const file = inputFile.files[0];
+  if (!file) return;
+  try {
+    const content = await file.text();
+    overrides.clear();
+    listInput.value = content.replace(/^\uFEFF/, '');
+    listInput.dispatchEvent(new Event('input'));
+  } catch {
+    pasteHelp.textContent = 'File gagal dibaca. Coba buka file TXT atau TSV lain.';
+  } finally {
+    inputFile.value = '';
+  }
+});
+byId('mode').addEventListener('change',() => {
+  for (const override of overrides.values()) delete override.bus;
+  render();
+});
+for (const id of ['mixbus-list','output-list']) {
+  byId(id).addEventListener('input',() => {
+    byId('clip-status').textContent = '';
+    if (id === 'mixbus-list' && !isMonitor()) for (const override of overrides.values()) delete override.bus;
+    render();
+  });
+}
+for (const button of document.querySelectorAll('[data-paste]')) {
+  button.addEventListener('click',async () => {
+    const field = byId(button.dataset.paste);
+    const status = byId('clip-status');
+    try {
+      const content = await navigator.clipboard.readText();
+      if (!content.trim()) {
+        status.textContent = 'Salin daftar yang ingin ditempel terlebih dahulu.';
+        return;
+      }
+      field.setRangeText(content,field.selectionStart,field.selectionEnd,'end');
+      field.dispatchEvent(new Event('input'));
+    } catch {
+      field.focus();
+      status.textContent = 'Ketuk dan tahan pada kolom, lalu pilih Tempel.';
+    }
+  });
+}
+byId('mixing-role').addEventListener('change',() => {
+  byId('role-help').hidden = true;
+});
+byId('scene-export').onclick = () => {
+  const feedback = byId('export-result');
+  feedback.textContent = '';
+  try {
+    const scene = configureScene(sceneBase,{...plan,show:byId('show').value.trim()});
+    download(scene,'application/octet-stream','scn');
+    feedback.textContent = 'Scene dibuat. Buka di M32-Edit untuk cek patch sebelum soundcheck.';
+  } catch (error) {
+    feedback.textContent = error.message;
+  }
+};
+byId('form').addEventListener('submit',event => event.preventDefault());
+byId('sample').onclick = () => {
+  overrides.clear();
+  byId('list').value = '1 Kick In\n2 Snare Top\n3 Tom 1\n4 Floor Tom\n5 OH L\n6 OH R\n9 | Bass DI | AES50-A 9\n10 Gtr L\n11 Gtr R\n13 Keys L\n14 Keys R\n17 Lead Vox\n18 BGV 1';
+  byId('mixbus-list').value = isMonitor()
+    ? '1-2 | IEM Vokal | PRE\n3 | Wedge Drum | PRE'
+    : '9-10 | DRUM | GRP\n11-12 | GTR | GRP\n13 | Reverb | POST';
+  byId('output-list').value = isMonitor()
+    ? '1 | Bus 1\n2 | Bus 2\n3 | Bus 3'
+    : '15 | Main L\n16 | Main R';
+  render();
+};
+byId('reset').onclick = () => { overrides.clear(); render(); };
+byId('export').onclick = () => {
+  const lines = [['CH','Input list','Nama M32','Patch','Warna','Pan','Subgroup ke Main LR','DCA','Main LR CH']];
+  for (const row of rows) lines.push([
+    row.ch,row.name,row.label,row.patchEdit || 'Ikuti scene dasar',row.color,row.pan,
+    row.bus ? busLabel(plan.buses.find(bus => bus.start === row.bus)) : '',
+    inputDcaNumbers(row,plan.monitor).map(number=>number+' '+(plan.monitor ? monitorDcaNames[number-1] : groups.find(group=>group.dca===number).name)).join(' + '),row.bus || plan.monitor ? 'OFF' : 'ON'
+  ]);
+  const clean = value => String(value).replace(/[\t\r\n]/g,' ').replace(/^\s*[=+\-@]/,"'$&");
+  const url = URL.createObjectURL(new Blob(['\ufeff', lines.map(line => line.map(clean).join('\t')).join('\r\n')],{type:'text/tab-separated-values;charset=utf-8'}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = (byId('show').value.trim().replace(/[^\p{L}\p{N} _-]+/gu,'-') || 'M32-Input-List') + '.tsv';
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url),1000);
+};
+
+const PDFJS_URL = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.7.284/legacy/build/';
+const pdfLists = [
+  {key:'input',title:'Input List',field:'list'},
+  {key:'bus',title:'Mix Bus',field:'mixbus-list'},
+  {key:'output',title:'Output Patch',field:'output-list'}
+];
+
+function groupPdfText(items) {
+  const rows = [];
+  const fragments = items.filter(item => item.str?.trim()).map(item => ({
+    text:item.str.trim(),
+    x:item.transform[4],
+    y:item.transform[5],
+    width:item.width,
+    em:Math.max(1,item.height || Math.abs(item.transform[3]))
+  })).sort((a,b) => b.y - a.y || a.x - b.x);
+  for (const part of fragments) {
+    const previous = rows.at(-1);
+    if (previous && Math.abs(previous.y - part.y) <= Math.max(2,part.em * 0.24)) {
+      previous.parts.push(part);
+    } else {
+      rows.push({y:part.y,parts:[part]});
+    }
+  }
+  return rows.map(row => row.parts.sort((a,b)=>a.x-b.x).reduce((columns,part) => {
+    const end = part.x + part.width;
+    const previous = columns.at(-1);
+    const gap = previous ? part.x - previous.end : Infinity;
+    if (gap <= Math.max(7,part.em * 0.9)) {
+      previous.text += (gap <= part.em * 0.08 ? '' : ' ') + part.text;
+      previous.end = Math.max(previous.end,end);
+    } else {
+      columns.push({x:part.x,end,text:part.text});
+    }
+    return columns;
+  },[]));
+}
+
+function pdfHeading(text) {
+  const name = text.toLowerCase().trim().replace(/[:\s–-]+$/,'');
+  if (/^(?:audio )?input channel list(?:\s|$)/.test(name)) return 'input';
+  if (/^(?:(?:channel |audio )?input(?: (?:list|patch|channels?|assignments?))?|channel list|(?:daftar )?(?:masukan|input))(?:\s*[\[(]\s*(?:foh|mon(?:itor)?)\s*[\])])?$/.test(name)) return 'input';
+  if (/^(?:(?:mix\s*)?bus(?:es)?(?: list)?|daftar mix\s*bus|monitor bus list)$/.test(name)) return 'bus';
+  if (/^(?:(?:audio |foh |monitor )?output(?:s| (?:list|patch|assignments?))?|daftar output|daftar keluaran|output routing|monitor list)$/.test(name)) return 'output';
+  if (/\bstage plot$|^yang (?:dibawa|disediakan)\b/.test(name)) return 'other';
+  if (/^(?:stage plot|equipment list|microphone list|backline|stage plan|technical rider|notes?|contact(?:s| information)?|lighting(?: list| plot)?|power requirements|catatan)$/.test(name)) return 'other';
+  return '';
+}
+
+function pdfListNumber(cells,section) {
+  const prefixes = {input:/^(?:ch(?:annel)?|input)\s*#?\s*/i,bus:/^(?:mix\s*bus|bus)\s*#?\s*/i,output:/^(?:out(?:put)?)\s*#?\s*/i};
+  const explicit = Object.keys(prefixes).find(key => prefixes[key].test(cells[0]) && /^\d/.test(cells[0].replace(prefixes[key],'')));
+  const key = explicit || section;
+  if (!pdfLists.some(list => list.key === key)) return null;
+  const first = explicit ? cells[0].replace(prefixes[explicit],'') : cells[0];
+  const match = first.match(/^#?\s*(\d{1,2})(?:\s*[-–]\s*(\d{1,2}))?(?:\s*(?:[.)|:]|->|→|[-–]\s)\s*|\s+|$)(.*)$/);
+  if (!match) return null;
+  return {key,start:Number(match[1]),end:Number(match[2] || match[1]),fields:[match[3],...cells.slice(1)].map(text=>text.trim()).filter(Boolean)};
+}
+
+function pdfInputFields(fields) {
+  let name = fields[0];
+  const inline = name.match(/^(.*?)\s+((?:(?:AES50[- ]?[AB]|Local|Card|Aux)\s*\d+|OFF))$/i);
+  if (inline && readPatch(inline[2]) !== undefined) name = inline[1];
+  const patch = inline?.[2] && readPatch(inline[2]) !== undefined
+    ? inline[2]
+    : fields.slice(1).find(field => readPatch(field) !== undefined);
+  return [name,patch].filter(Boolean);
+}
+
+function pdfOutputSource(text) {
+  const clean = text.trim().replace(/\s+/g,' ');
+  const main = clean.match(/^main\s*(l(?:eft)?|r(?:ight)?|m\/c|mono)$/i);
+  if (main) return 'Main ' + (/^m/i.test(main[1]) ? 'M/C' : main[1][0].toUpperCase());
+  const send = clean.match(/^(?:(mix\s*bus|bus)|(matrix|mtx))\s*#?\s*(\d{1,2})$/i);
+  if (send && Number(send[3]) >= 1 && Number(send[3]) <= (send[1] ? 16 : 6)) {
+    return (send[1] ? 'Bus ' : 'Matrix ') + Number(send[3]);
+  }
+  if (/^m\/c$/i.test(clean)) return 'Main M/C';
+  return /^off$/i.test(clean) ? 'OFF' : '';
+}
+
+function extractPdfLists(pages,jobdesk='foh') {
+  const found = {input:new Map(),bus:new Map()};
+  const monitorRows = [];
+  const warnings = [];
+  let section = '';
+  for (const [index,lines] of pages.entries()) {
+    let split = null;
+    let inputRoles = [];
+    let auxTable = null;
+    for (const line of lines) {
+      const cells = line.flatMap(entry => entry.text.split(/\s*\|\s*/)).filter(Boolean);
+      const headers = line.map(({x,text})=>({x,key:pdfHeading(text)})).filter(item=>item.key);
+      if (headers.length >= 2 && headers[1].x - headers[0].x >= 80 && headers[0].key !== headers[1].key) {
+        split = {x:headers[1].x - 3,left:headers[0].key,right:headers[1].key};
+        section = '';
+        inputRoles = [];
+        continue;
+      }
+      const heading = pdfHeading(cells.join(' ')) || (headers.length === 1 && headers[0].key !== 'other' && headers[0].key);
+      if (heading && (!split || cells.length === 1 || pdfHeading(cells.join(' ')))) {
+        if (section !== heading) {
+          inputRoles = [];
+          auxTable = null;
+        }
+        section = heading;
+        split = null;
+        continue;
+      }
+      if (section === 'input' || split?.left === 'input') {
+        const roles = cells.join(' ').toUpperCase().match(/^(FOH|MON(?:ITOR)?)\s*(FOH|MON(?:ITOR)?)\b/);
+        if (roles && roles[1] !== roles[2]) {
+          inputRoles = roles.slice(1).map(role=>role === 'FOH' ? 'foh' : 'monitor');
+          continue;
+        }
+      }
+      if (section === 'output' && !split && /^AUX(?:\s|$)/i.test(cells[0] || '')) {
+        const labelIndex = line.findIndex(entry=>/^(?:REMARKS|DESTINATION|OUTPUT NAME)(?:\s|$)/i.test(entry.text));
+        if (labelIndex > 0) {
+          const center = entry => (entry.x + entry.end) / 2;
+          const label = center(line[labelIndex]);
+          const previous = center(line[labelIndex-1]);
+          const next = line[labelIndex+1];
+          const number = center(line[0]);
+          auxTable = {
+            numberEnd:(number + center(line[1])) / 2,
+            labelStart:(previous + label) / 2,
+            labelEnd:next ? (label + center(next)) / 2 : Infinity
+          };
+          continue;
+        }
+      }
+      const parts = split ? [
+        [line.filter(entry=>entry.x < split.x),split.left],
+        [line.filter(entry=>entry.x >= split.x),split.right]
+      ] : [[line,section]];
+      for (const [entries,list] of parts) {
+        const columns = entries.flatMap(entry => entry.text.split(/\s*\|\s*/)).filter(Boolean);
+        if (!columns.length || list === 'other') continue;
+        const physical = /^(?:stagebox\s+)?xlr\s*\d/i.test(columns[0]);
+        const aux = list === 'output' && auxTable && !split && !physical;
+        let row;
+        if (aux) {
+          const number = entries.filter(entry=>entry.x < auxTable.numberEnd).map(entry=>entry.text).join(' ');
+          if (!/^\d{1,2}(?:\s*[-–]\s*\d{1,2})?$/.test(number)) continue;
+          const name = entries.filter(entry=>entry.x >= auxTable.labelStart && entry.x < auxTable.labelEnd)
+            .map(entry=>entry.text).join(' ').trim();
+          if (!name) {
+            warnings.push('Output · Hal. ' + (index+1) + ' · AUX ' + number + ' belum memiliki nama yang terbaca di REMARKS.');
+            continue;
+          }
+          row = pdfListNumber([number,name],list);
+        } else {
+          row = pdfListNumber(physical ? [columns[0].replace(/^(?:stagebox\s+)?xlr/i,'Out'),...columns.slice(1)] : columns,list);
+        }
+        if (!row || !row.fields.length) continue;
+        if (row.key === 'input' && list === 'input' && inputRoles.length) {
+          const secondary = row.fields[0].match(/^(\d{1,2})(?:\s+(.*))?$/);
+          if (!secondary) continue;
+          const number = inputRoles[0] === jobdesk ? row.start : Number(secondary[1]);
+          row = {...row,start:number,end:number,fields:[secondary[2],...row.fields.slice(1)].filter(Boolean)};
+          if (!row.fields.length) continue;
+        }
+        const {key,start,end,fields} = row;
+        const showIssue = message => warnings.push((key === 'output' ? 'Output · ' : key === 'bus' ? 'Mix Bus · ' : '') + 'Hal. ' + (index+1) + ' · ' + columns.join(' ') + ' — ' + message);
+        const max = key === 'input' ? 32 : 16;
+        const validRange = start === end || (end === start + 1 && (key === 'output' || (key === 'bus' && start % 2 === 1)));
+        if (start < 1 || end > max || !validRange) {
+          showIssue('Nomor di luar format ' + pdfLists.find(list=>list.key===key).title + '.');
+          continue;
+        }
+        if (key === 'output') {
+          const monitor = buildMonitorRow(row,physical);
+          if (monitor) monitorRows.push(monitor);
+          else showIssue('Sumber output lebih dari satu. Tentukan di setup.');
+          continue;
+        }
+        let values;
+        if (key === 'input') values = pdfInputFields(fields);
+        if (key === 'bus') {
+          const mode = fields.at(-1).match(/(?:^|\s)(GRP|POST|PRE|SUBGROUP|POST-FADER|PRE-FADER)$/i);
+          const name = mode && fields.length === 1 ? fields[0].slice(0,mode.index).trim() : fields[0];
+          if (!mode || !name) {
+            showIssue('Mode Mix Bus perlu diisi PRE, POST, atau GRP.');
+            continue;
+          }
+          const type = mode[1].toUpperCase().replace('SUBGROUP','GRP').replace('-FADER','');
+          if (type !== 'GRP') values = [name,type];
+          else continue;
+        }
+        const records = found[key];
+        const entry = [start === end ? start : start + '-' + end,...values].join(' | ');
+        const previous = records.get(start);
+        if (previous && previous !== entry) {
+          showIssue('Nomor ganda dengan data berbeda. Periksa entri pertama di preview.');
+          continue;
+        }
+        records.set(start,entry);
+      }
+    }
+  }
+  const lists = Object.fromEntries(Object.entries(found).map(([key,records])=>[key,[...records].sort((a,b)=>a[0]-b[0]).map(([,entry])=>entry)]));
+  const outputNames = monitorRows.map(({start,end,name,source})=>({start,end,name:name || source || 'Out '+start}));
+  return {lists,monitor:monitorFromRider(pairMonitorOutputs(monitorRows),lists.bus),outputNames,warnings};
+}
+
+const pdfButton = byId('open-pdf');
+const pdfFile = byId('pdf-file');
+const pdfStatus = byId('pdf-status');
+pdfButton.onclick = () => pdfFile.click();
+pdfFile.addEventListener('change',async () => {
+  const file = pdfFile.files[0];
+  pdfFile.value = '';
+  if (!file) return;
+  byId('pdf-raw').hidden = true;
+  byId('pdf-text').textContent = '';
+  riderResult = null;
+  readingRider = true;
+  pdfButton.disabled = true;
+  showStep(currentStep);
+  pdfStatus.textContent = 'Membaca ' + file.name + '…';
+  let task;
+  try {
+    let pdfjs;
+    try {
+      pdfjs = await import(PDFJS_URL + 'pdf.mjs');
+    } catch {
+      throw new Error('Pembaca PDF gagal dimuat. Cek koneksi internet, lalu coba lagi.');
+    }
+    pdfjs.GlobalWorkerOptions.workerSrc = PDFJS_URL + 'pdf.worker.mjs';
+    task = pdfjs.getDocument({
+      data:new Uint8Array(await file.arrayBuffer()),
+      isEvalSupported:false,
+      cMapUrl:PDFJS_URL.replace('legacy/build/','cmaps/'),
+      cMapPacked:true,
+      standardFontDataUrl:PDFJS_URL.replace('legacy/build/','standard_fonts/')
+    });
+    const pdf = await task.promise;
+    const pages = [];
+    for (let number=1;number<=pdf.numPages;number++) {
+      pdfStatus.textContent = 'Membaca halaman ' + number + ' dari ' + pdf.numPages + '…';
+      const page = await pdf.getPage(number);
+      const text = await page.getTextContent();
+      pages.push(groupPdfText(text.items));
+      page.cleanup();
+    }
+    if (!pages.some(lines=>lines.length)) {
+      pdfStatus.textContent = 'Tidak ada layer teks. Untuk PDF scan atau foto, lakukan OCR dulu atau salin daftar secara manual.';
+      return;
+    }
+    byId('pdf-raw').hidden = false;
+    byId('pdf-text').textContent = pages.map((lines,i)=>'Halaman ' + (i+1) + '\n' + lines.map(row=>row.map(column=>column.text).join('   ')).join('\n')).join('\n\n');
+    riderResult = extractPdfLists(pages);
+    riderResult.monitorInputs = extractPdfLists(pages,'monitor').lists.input;
+    const inputCount = (isMonitor() ? riderResult.monitorInputs : riderResult.lists.input).length;
+    const outputCount = riderResult.outputNames.reduce((count,row)=>count+row.end-row.start+1,0);
+    pdfStatus.textContent = inputCount || outputCount
+      ? inputCount + ' input dan ' + outputCount + ' output terbaca dari ' + file.name + '.'
+      : 'Teks PDF terbaca, tetapi tabel input belum dikenali. Lihat teks PDF di langkah Preview.';
+  } catch (error) {
+    pdfStatus.textContent = error.name === 'PasswordException'
+      ? 'PDF terkunci. Gunakan salinan PDF yang sudah dibuka kuncinya.'
+      : 'Impor PDF gagal. ' + error.message;
+  } finally {
+    try { await task?.destroy(); } catch {}
+    pdfButton.disabled = false;
+    readingRider = false;
+    showStep(currentStep);
+  }
+});
+
+const stepTitles = ['Jobdesk','Impor stage rider','Preview','DCA konfirmasi','Konfirmasi send mode','Custom send mode','Fader Set','Generate'];
+let editingIO = false;
+let currentStep = 1;
+let riderResult = null;
+let appliedRider = null;
+let appliedInputSource = null;
+const roleSetups = new Map();
+let activeRole = '';
+let readingRider = false;
+
+function showStep(step) {
+  currentStep = step;
+  if (step !== 3) editingIO = false;
+  const editIO = step === 3 && editingIO;
+  byId('wizard-setup').hidden = step !== 3;
+  byId('wizard-setup-title').textContent = editIO ? 'Edit I/O' : 'Preview';
+  byId('wizard-preview-rows').hidden = step !== 3 || editIO;
+  for (const id of ['wizard-edit-fields','wizard-routing-editor','wizard-foh-settings','wizard-mode-help','wizard-edit-table','edit-routing-summary','preview-paste-fields']) {
+    byId(id).hidden = !editIO;
+  }
+  previewFeedback('');
+  byId('wizard-pdf-notes').hidden = !editIO || !riderResult;
+  byId('wizard-dca').hidden = step !== 4;
+  const toggle = byId('wizard-io-toggle');
+  toggle.hidden = step !== 3;
+  toggle.textContent = editIO ? 'Kembali ke Preview' : 'Edit I/O';
+  toggle.setAttribute('aria-expanded',String(editIO));
+  byId('wizard-role').hidden = step !== 1;
+  byId('wizard-import').hidden = step !== 2;
+  byId('wizard-send-mode').hidden = step !== 5;
+  byId('wizard-custom-send').hidden = step !== 6;
+  byId('wizard-fader-set').hidden = step !== 7;
+  byId('wizard-generate').hidden = step !== stepTitles.length;
+  byId('wizard-progress').textContent = 'Langkah ' + step + ' dari ' + stepTitles.length + ' · ' + stepTitles[step-1];
+  byId('wizard-back').hidden = step === 1;
+  byId('wizard-next').hidden = step === stepTitles.length;
+  byId('wizard-next').textContent = step === 2 && !riderResult ? 'Lanjut tanpa PDF' : ({
+    1:'Lanjut ke impor',2:'Lanjut ke preview',3:'Lanjut ke DCA',4:'Konfirmasi DCA',5:'Konfirmasi send mode',6:'Lanjut ke Fader Set',7:'Lanjut ke Generate'
+  })[step];
+  byId('wizard-next').disabled = step === 2 && readingRider;
+  byId('wizard-mode-help').textContent = isMonitor()
+    ? 'Daftar output rider menjadi Mix Bus monitor dan Output Patch. Cek nomor dan sumbernya sebelum generate.'
+    : 'Atur Output Patch FOH sendiri. Daftar output rider tersedia sebagai referensi. Untuk menambah atau menempel konfigurasi Mix Bus, buka Edit I/O.';
+  render();
+}
+
+function captureSetup() {
+  return {
+    bus:byId('mixbus-list').value,
+    out:byId('output-list').value,
+    mode:byId('mode').value
+  };
+}
+
+function selectRole() {
+  const next = byId('mixing-role').value;
+  if (next === activeRole) return;
+  if (activeRole) roleSetups.set(activeRole,captureSetup());
+  activeRole = next;
+  const settings = roleSetups.get(next) || {
+    bus:next === 'monitor' && riderResult ? riderResult.monitor.bus.join('\n') : '',
+    out:next === 'monitor' && riderResult ? riderResult.monitor.output.join('\n') : '',
+    mode:'direct'
+  };
+  byId('mixbus-list').value = settings.bus;
+  byId('output-list').value = settings.out;
+  byId('mode').value = settings.mode;
+}
+
+function sameRiderSetup(first,second) {
+  if (!first || !second) return false;
+  const setup = rider=>JSON.stringify([
+    rider.lists.input,rider.monitorInputs ?? rider.lists.input,
+    rider.monitor.bus,rider.monitor.output,rider.outputNames
+  ]);
+  return setup(first) === setup(second);
+}
+
+function applyRider() {
+  if (!riderResult) return;
+  const isNew = appliedRider !== riderResult && !sameRiderSetup(appliedRider,riderResult);
+  appliedRider = riderResult;
+  if (isNew) {
+    manualInputLinks.foh.clear();
+    manualInputLinks.monitor.clear();
+    roleSetups.delete('monitor');
+    extraSendModes.monitor.clear();
+    faderSetups.monitor = {main:'-oo',bus:1};
+  }
+  const input = (isMonitor() ? riderResult.monitorInputs ?? riderResult.lists.input : riderResult.lists.input).join('\n');
+  if (input !== appliedInputSource || isNew) {
+    if (input || (!isNew && appliedInputSource)) {
+      byId('list').value = input;
+      if (isNew) overrides.clear();
+    }
+    appliedInputSource = input;
+  }
+  if (isNew && isMonitor()) {
+    byId('mixbus-list').value = riderResult.monitor.bus.join('\n');
+    byId('output-list').value = riderResult.monitor.output.join('\n');
+  }
+}
+
+function pairMonitorOutputs(records) {
+  const pairs = [];
+  for (let i=0; i<records.length; i++) {
+    const left = records[i];
+    const right = records[i+1];
+    const leftName = stereoSuffix(left.name);
+    const rightName = right && stereoSuffix(right.name);
+    if (leftName?.side === 'L' && rightName?.side === 'R' && leftName.name.toLowerCase() === rightName.name.toLowerCase()
+      && left.start % 2 === 1 && left.end === left.start && right.start === left.start+1 && right.start === right.end
+      && !left.source && !right.source && left.tap === right.tap && left.physical === right.physical) {
+      pairs.push({...left,end:right.end,name:leftName.name});
+      i++;
+    } else pairs.push(left);
+  }
+  return pairs;
+}
+
+function monitorFromRider(records, importedBuses) {
+  if (!records.length) return {bus:importedBuses,output:[],warnings:[]};
+  const warnings = [];
+  const buses = new Map();
+  const outputs = new Map();
+  const namedBuses = parseBuses(importedBuses.join('\n'),true,[]);
+  const usedExplicit = new Set(records.flatMap(row=>row.explicitBus ? [row.explicitBus, ...(row.end > row.start ? [row.explicitBus+1] : [])] : []));
+  for (const row of records) {
+    const {start,end,source,explicitBus,name,tap}=row;
+    const count = end - start + 1;
+    const warn = message => warnings.push('Out ' + start + (count > 1 ? '–' + end : '') + ' · ' + message);
+    if (outputs.has(start) || outputs.has(end)) {
+      warn('Nomor output ganda. Entri pertama dipakai.');
+      continue;
+    }
+    if (row.physical) warn('Nomor XLR dipakai sebagai slot Out sementara. Cek pemetaan fisik.');
+    if (source && !explicitBus) {
+      if (count > 1 && source !== 'Main L/R') {
+        warn('Periksa sumber untuk pasangan output ini.');
+        continue;
+      }
+      outputs.set(start,[start,source === 'Main L/R' ? 'Main L' : source,tap].filter(Boolean).join(' | '));
+      if (count > 1) outputs.set(end,[end,'Main R',tap].filter(Boolean).join(' | '));
+      continue;
+    }
+    let bus = explicitBus || start;
+    const stereo = count === 2;
+    if (stereo && explicitBus && (explicitBus % 2 === 0 || explicitBus >= 16)) {
+      warn('Link Mix Bus M32 perlu pasangan ganjil–genap.');
+      continue;
+    }
+    const available = candidate => candidate <= (stereo ? 15 : 16) && (!stereo || candidate % 2 === 1)
+      && !Array.from({length:count},(_,offset)=>candidate+offset).some(n=>usedExplicit.has(n) || buses.has(n));
+    if (!explicitBus && !available(bus)) {
+      bus = Array.from({length:16},(_,i)=>i+1).find(available);
+      if (!bus) {
+        warn('Tidak ada Mix Bus yang tersedia. Atur routing secara manual.');
+        continue;
+      }
+      warn('Diusulkan ke Bus ' + bus + ' karena nomor yang sama tidak tersedia.');
+    }
+    if (explicitBus && buses.has(bus) && (buses.get(bus).end !== bus + count - 1 || buses.get(bus).start !== bus)) {
+      warn('Mix Bus bertabrakan dengan bus lain. Periksa pasangan di setup.');
+      continue;
+    }
+    if (stereo && buses.has(bus+1) && buses.get(bus+1).start !== bus) {
+      warn('Pasangan Mix Bus bertabrakan dengan bus lain.');
+      continue;
+    }
+    const imported = namedBuses.find(entry=>entry.start === bus && entry.end === bus + count - 1);
+    const nameForBus = name || imported?.name || (stereo ? 'Monitor ' + start + '-' + end : 'Monitor ' + start);
+    const existing = buses.get(bus);
+    const state = existing || {start:bus,end:bus+count-1,name:nameForBus,mode:imported?.mode || 'PRE'};
+    for (let offset=0;offset<count;offset++) {
+      buses.set(bus+offset,state);
+      outputs.set(start+offset,[start+offset,'Bus ' + (bus+offset),tap].filter(Boolean).join(' | '));
+    }
+  }
+  const bus = [...new Set(buses.values())].sort((a,b)=>a.start-b.start)
+    .map(entry=>[entry.start===entry.end ? entry.start : entry.start+'-'+entry.end,entry.name,entry.mode].join(' | '));
+  return {bus,output:[...outputs].sort((a,b)=>a[0]-b[0]).map(([,value])=>value),warnings};
+}
+
+function buildMonitorRow(row, physical) {
+  const {start,end,fields} = row;
+  const tapPattern = /(?:^|\s)(POST|PRE\+M|PRE|EQ->\+M|EQ->|<-EQ\+M|<-EQ|IN\/LC\+M|IN\/LC)$/i;
+  const tap = fields.at(-1).match(tapPattern)?.[1].toUpperCase();
+  const values = fields.map(field=>field.replace(tapPattern,'').trim()).filter(Boolean);
+  const signals = values.map(value=> {
+    if (end > start && /^main\s*l\s*\/\s*r$/i.test(value)) return 'Main L/R';
+    const pair = end > start && value.match(/^(?:mix\s*)?bus\s*(\d{1,2})\s*[-–/]\s*(\d{1,2})$/i);
+    if (pair && Number(pair[2]) === Number(pair[1])+1 && Number(pair[2]) <= 16) return 'Bus ' + Number(pair[1]);
+    return pdfOutputSource(value);
+  });
+  const source = [...new Set(signals.filter(Boolean))];
+  if (source.length > 1 || (source[0] === 'Main L/R' && start === end)) return null;
+  const name = values.filter((_,i)=>!signals[i]).join(' ').trim();
+  const explicitBus = Number(source[0]?.match(/^Bus (\d+)$/)?.[1] || 0);
+  return {start,end,source:source[0],explicitBus,name,tap,physical};
+}
+
+
+function previewSelect(label,items,value,onChange) {
+  const select = document.createElement('select');
+  select.setAttribute('aria-label',label);
+  for (const [number,title] of items) select.add(new Option(title,number));
+  select.value = String(value);
+  select.addEventListener('change',()=>onChange(select.value));
+  return select;
+}
+
+function previewName(label,value,onChange) {
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = value;
+  input.setAttribute('aria-label',label);
+  input.addEventListener('change',()=>{
+    const name = input.value.trim();
+    if (!name || /[|\t\r\n]/.test(name)) {
+      input.value=value;
+      previewFeedback('Isi nama tanpa pemisah |.');
+      return;
+    }
+    if (name !== value) onChange(name);
+  });
+  return input;
+}
+
+function previewFeedback(message) {
+  byId('preview-feedback').textContent = message;
+}
+
+function switchPreviewNumber(list,entry,field,next) {
+  const original = entry[field];
+  const other = list.find(item=>item[field] === next);
+  return list.map(item=>item === entry ? next : item === other ? original : item[field]);
+}
+
+function writeInputPreview(rows,entry,{name=entry.name,number=entry.ch}) {
+  const numbers = switchPreviewNumber(rows,entry,'ch',number);
+  const field = byId('list');
+  const lines = field.value.split(/\r\n?|\n/);
+  const substitutions = [];
+  for (const [index,row] of rows.entries()) {
+    const next = numbers[index];
+    const nextName = row === entry ? name : row.name;
+    const changed = row.name !== nextName || row.ch !== next;
+    if (!changed && entry.ch === number) continue;
+    const patch = row.patch || (row.ch === next || row.patchEdit ? '' : 'Local '+row.ch);
+    lines[row.line-1] = [next,nextName,...(patch ? [patch] : [])].join(' | ');
+    const originalKey = rowKey(row);
+    const prior = {...overrides.get(originalKey)};
+    if (row.name !== nextName) {
+      if (row.confirmed) {
+        Object.assign(prior,{color:row.color,pan:row.pan,dca:row.dca,confirmed:true});
+        if (!isMonitor()) prior.bus = row.bus;
+      }
+      delete prior.label;
+    }
+    substitutions.push({originalKey,newKey:rowKey({ch:next,name:nextName,patch}),prior});
+  }
+  for (const {originalKey} of substitutions) overrides.delete(originalKey);
+  for (const {newKey,prior} of substitutions) {
+    if (Object.keys(prior).length) overrides.set(newKey,prior);
+  }
+  field.value=lines.join('\n');
+  previewFeedback(entry.ch === number ? 'Nama input diperbarui.' : 'Urutan input diperbarui. Patch sumber ikut pindah.');
+  render();
+}
+
+function writeOutputPreview(outputs) {
+  byId('output-list').value = outputs.slice().sort((a,b)=>a.start-b.start)
+    .map(out=>[out.start,out.label,out.tap].join(' | ')).join('\n');
+}
+
+function writeBusPreview(buses) {
+  byId('mixbus-list').value = buses.slice().sort((a,b)=>a.start-b.start)
+    .map(bus=>[bus.start === bus.end ? bus.start : bus.start+'-'+bus.end,bus.name,bus.mode].join(' | ')).join('\n');
+}
+
+function renamePreviewBus(rows,buses,bus,name) {
+  for (const row of rows.filter(row=>row.bus === bus.start)) {
+    const key=rowKey(row);
+    overrides.set(key,{...overrides.get(key),bus:bus.start});
+  }
+  writeBusPreview(buses.map(item=>item === bus ? {...item,name} : item));
+  previewFeedback('Nama Mix Bus dan label output diperbarui.');
+  render();
+}
+
+function movePreviewBus(buses,outputs,bus,next) {
+  const width = bus.end-bus.start;
+  const other = buses.find(candidate=>candidate !== bus && candidate.end >= next && candidate.start <= next+width);
+  if (other && (other.start !== next || other.end-other.start !== width)) {
+    previewFeedback('Pilih slot kosong atau tukar dengan Mix Bus yang sama lebar.');
+    render();
+    return;
+  }
+  const moved = new Map();
+  for (let side=0;side<=width;side++) {
+    moved.set(bus.start+side,next+side);
+    if (other) moved.set(next+side,bus.start+side);
+  }
+  const updated = buses.map(candidate=>({
+    ...candidate,start:moved.get(candidate.start) ?? candidate.start,end:moved.get(candidate.end) ?? candidate.end
+  }));
+  const modeErrors = [];
+  parseBuses(updated.map(item=>[item.start === item.end ? item.start : item.start+'-'+item.end,item.name,item.mode].join(' | ')).join('\n'),isMonitor(),modeErrors);
+  if (modeErrors.length) {
+    previewFeedback(modeErrors[0]);
+    render();
+    return;
+  }
+  writeBusPreview(updated);
+  writeOutputPreview(outputs.map(out=>moved.has(out.id-3) && out.id>=4 && out.id<=19
+    ? {...out,label:'Bus '+moved.get(out.id-3),id:moved.get(out.id-3)+3}
+    : out));
+  for (const override of overrides.values()) {
+    if (!isMonitor() && moved.has(override.bus)) override.bus=moved.get(override.bus);
+  }
+  previewFeedback('Urutan Mix Bus dan sumber Output Patch diperbarui.');
+  render();
+}
+
+const previewNumbers = max => Array.from({length:max},(_,i)=>[i+1,twoDigits(i+1)]);
+const previewSignals = [
+  [0,'OFF'],[1,'Main L'],[2,'Main R'],[3,'Main M/C'],
+  ...Array.from({length:16},(_,i)=>[i+4,'Bus '+(i+1)]),
+  ...Array.from({length:6},(_,i)=>[i+20,'Matrix '+(i+1)])
+];
+
+function renderRoutingEditor(rows,buses,outputs,errors) {
+  if (currentStep !== 3 || !editingIO) return;
+  const input = byId('preview-input-body');
+  const mix = byId('preview-bus-body');
+  const patch = byId('preview-output-body');
+  input.replaceChildren();
+  mix.replaceChildren();
+  patch.replaceChildren();
+  byId('preview-input-table').hidden = !rows.length;
+  byId('preview-bus-table').hidden = !buses.length;
+  byId('preview-output-table').hidden = !outputs.length;
+  const hasBusErrors = errors.some(message=>message.startsWith('Mix Bus'));
+  const hasOutputErrors = errors.some(message=>message.startsWith('Output Patch'));
+  byId('preview-add-output').disabled = outputs.length >= 16 || hasOutputErrors;
+  for (const row of rows) {
+    const tr = input.insertRow();
+    cell(tr,previewSelect('Pindah CH '+twoDigits(row.ch),previewNumbers(32),row.ch,value=>
+      writeInputPreview(rows,row,{number:Number(value)})));
+    const nameCell = cell(tr,previewName('Nama CH '+twoDigits(row.ch),row.label,name=>writeInputPreview(rows,row,{name})));
+    if (!row.confirmed) {
+      tr.className = 'review-needed';
+      const mark = document.createElement('span');
+      mark.className = 'preview-row-review';
+      mark.textContent = 'Perlu review';
+      const button = channelReviewButton(row);
+      button.className = 'preview-review-button';
+      nameCell.append(mark,button);
+    }
+    cell(tr,row.patchEdit || 'Local '+row.ch);
+  }
+  for (const bus of buses) {
+    const width = bus.end-bus.start;
+    const slots = previewNumbers(16).filter(([n])=>!width || (n<16 && n%2===1))
+      .map(([n,title])=>[n,width ? title+'-'+twoDigits(n+1) : title]);
+    const tr = mix.insertRow();
+    const position = previewSelect('Pindah Mix Bus '+bus.start,slots,bus.start,value=>
+      movePreviewBus(buses,outputs,bus,Number(value)));
+    position.disabled=hasBusErrors || hasOutputErrors;
+    cell(tr,position);
+    const name = previewName('Nama Mix Bus '+bus.start,bus.name,value=>renamePreviewBus(rows,buses,bus,value));
+    name.disabled=hasBusErrors;
+    cell(tr,name);
+    cell(tr,bus.mode);
+  }
+  for (const out of outputs) {
+    const tr = patch.insertRow();
+    const position = previewSelect('Pindah Out '+out.start,previewNumbers(16),out.start,value=>{
+      const numbers=switchPreviewNumber(outputs,out,'start',Number(value));
+      writeOutputPreview(outputs.map((item,i)=>({...item,start:numbers[i]})));
+      previewFeedback('Urutan Output Patch diperbarui.');
+      render();
+    });
+    position.disabled=hasOutputErrors;
+    cell(tr,position);
+    const route = previewSelect('Sumber Out '+out.start,previewSignals,out.id,value=>{
+      const [id,label]=previewSignals.find(([id])=>id===Number(value));
+      writeOutputPreview(outputs.map(item=>item===out ? {...item,id,label} : item));
+      previewFeedback('Sumber Output Patch diperbarui.');
+      render();
+    });
+    route.disabled=hasOutputErrors;
+    cell(tr,route);
+    const bus=buses.find(bus=>out.id>=4 && out.id<=19 && out.id-3>=bus.start && out.id-3<=bus.end);
+    if (bus) {
+      const name = previewName('Nama output Out '+out.start,bus.name,value=>renamePreviewBus(rows,buses,bus,value));
+      name.disabled=hasBusErrors;
+      cell(tr,name);
+    } else cell(tr,out.label);
+  }
+  const riderOutputs=byId('preview-rider-output-list');
+  riderOutputs.replaceChildren();
+  const imported=appliedRider?.outputNames || [];
+  byId('preview-rider-outputs').hidden=!imported.length;
+  byId('preview-rider-output-title').textContent = 'Output di PDF rider (' + imported.reduce((count,row)=>count+row.end-row.start+1,0) + ')';
+  for (const row of imported) {
+    const li=document.createElement('li');
+    li.textContent='Out '+row.start+(row.end===row.start ? '' : '-'+row.end)+' · '+row.name;
+    riderOutputs.append(li);
+  }
+}
+
+byId('preview-add-output').onclick=()=>{
+  const used=new Set(plan.outputs.map(out=>out.start));
+  const slot=previewNumbers(16).find(([number])=>!used.has(number))?.[0];
+  if (slot) {
+    writeOutputPreview([...plan.outputs,{start:slot,id:0,label:'OFF',tap:'POST'}]);
+    previewFeedback('Out '+slot+' ditambahkan. Pilih sumbernya.');
+    render();
+  }
+};
+
+
+function editOverviewName(cell,rows,row) {
+  const actions = document.createElement('div');
+  actions.className = 'overview-review-actions';
+  const field = document.createElement('input');
+  field.type = 'text';
+  field.value = inputLabelForLink(row);
+  field.setAttribute('aria-label','Nama CH '+twoDigits(row.ch));
+  const save = document.createElement('button');
+  save.type = 'button';
+  save.textContent = 'Simpan';
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.textContent = 'Batal';
+  save.onclick = () => {
+    const name = field.value.trim();
+    if (!name || /[|\t\r\n]/.test(name)) {
+      field.setCustomValidity('Isi nama channel tanpa pemisah |.');
+      field.reportValidity();
+      return;
+    }
+    if (name === inputLabelForLink(row)) render();
+    else writeInputPreview(rows,row,{name});
+  };
+  cancel.onclick = () => render();
+  field.addEventListener('input',()=>field.setCustomValidity(''));
+  field.addEventListener('keydown',event=>{
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      save.onclick();
+    }
+    if (event.key === 'Escape') cancel.onclick();
+  });
+  actions.append(field,save,cancel);
+  cell.append(actions);
+  field.focus();
+  field.select();
+}
+
+const chainSymbol = '🔗';
+function chainIcon() {
+  const icon = document.createElement('span');
+  icon.className = 'chain-icon';
+  icon.textContent = chainSymbol;
+  icon.setAttribute('role','img');
+  icon.setAttribute('aria-label','Terhubung');
+  return icon;
+}
+
+function renderChannelOverview(rows,buses,outputs) {
+  if (currentStep !== 3 || editingIO) return;
+  const input = byId('overview-input');
+  const output = byId('overview-output');
+  input.replaceChildren();
+  output.replaceChildren();
+  const inputLinks = plan.inputLinks;
+  const busLinks = busStereoStarts(buses);
+  for (const row of rows) {
+    const tr = input.insertRow();
+    cell(tr,twoDigits(row.ch));
+    const name = cell(tr,row.label || row.name);
+    if (!row.confirmed) {
+      tr.className = 'review-needed';
+      const mark = document.createElement('span');
+      mark.className = 'preview-row-review';
+      mark.textContent = 'Perlu review';
+      const actions = document.createElement('div');
+      actions.className = 'overview-review-actions';
+      const rename = document.createElement('button');
+      rename.type = 'button';
+      rename.textContent = 'Edit nama';
+      rename.setAttribute('aria-label','Edit nama CH '+twoDigits(row.ch));
+      rename.onclick = () => {
+        actions.hidden = true;
+        editOverviewName(name,rows,row);
+      };
+      actions.append(channelReviewButton(row),rename);
+      name.append(mark,actions);
+    }
+    if (inputLinks.has(pairStart(row.ch))) name.append(chainIcon());
+  }
+  const imported = appliedRider?.outputNames || [];
+  const names = outputs.length ? outputs.map(out=>{
+    const number = out.id - 3;
+    const bus = out.id >= 4 && out.id <= 19 && buses.find(item=>number >= item.start && number <= item.end);
+    return {start:out.start,end:out.start,name:bus ? mixBusName(buses,number) : out.label,linked:bus && busLinks.has(pairStart(number))};
+  }) : imported;
+  for (const out of names.slice().sort((a,b)=>a.start-b.start)) {
+    const tr = output.insertRow();
+    cell(tr,twoDigits(out.start)+(out.end === out.start ? '' : '–'+twoDigits(out.end)));
+    const name = cell(tr,out.name);
+    if (out.linked) name.append(chainIcon());
+  }
+}
+
+const extraSendModes = {foh:new Map(),monitor:new Map()};
+const sendModeOptions = [['POST','All post fader'],['PRE','All pre fader']];
+const sceneBusLinks = sceneBase.match(/^\/config\/buslink (.+)$/m)[1].trim().split(/\s+/);
+const sceneBusNames = new Map([...sceneBase.matchAll(/^\/bus\/(\d{2})\/config\s+"([^"]*)"/gm)]
+  .map(([,number,name])=>[Number(number),name]));
+function mixBusName(buses,number) {
+  const bus = buses.find(item=>number>=item.start && number<=item.end);
+  if (!bus) return sceneBusNames.get(number);
+  const side = bus.start !== bus.end ? (number === bus.start ? ' L' : ' R') : '';
+  return bus.name + side;
+}
+
+function mixBusRangeName(buses,start,end) {
+  return [...new Set(Array.from({length:end-start+1},(_,i)=>mixBusName(buses,start+i)).filter(Boolean))].join(' / ');
+}
+
+function renderSendModeConfirmation(buses,errors) {
+  if (currentStep !== 5) return;
+  const body = byId('send-mode-buses');
+  body.replaceChildren();
+  const hasErrors = errors.some(message=>message.startsWith('Mix Bus '));
+  byId('send-mode-error').hidden = !hasErrors;
+  const savedModes = extraSendModes[isMonitor() ? 'monitor' : 'foh'];
+  for (let start=1; start<=15; start+=2) {
+    const end = start+1;
+    const pairBuses = buses.filter(bus=>pairStart(bus.start)===start);
+    const name = mixBusRangeName(buses,start,end);
+    const tr = body.insertRow();
+    const pair = twoDigits(start)+'–'+twoDigits(end);
+    cell(tr,pair);
+    cell(tr,name || '—');
+    const mode = pairBuses[0]?.mode ?? savedModes.get(start);
+    if (mode === 'GRP') {
+      cell(tr,'Subgroup');
+      continue;
+    }
+    const options = pairBuses.length ? sendModeOptions : [['','Ikuti scene dasar'],...sendModeOptions];
+    const select = previewSelect('Send mode Mix Bus '+pair,options,mode || '',value=>{
+      if (pairBuses.length) {
+        writeBusPreview(buses.map(bus=>pairStart(bus.start)===start ? {...bus,mode:value} : bus));
+      } else if (value) {
+        savedModes.set(start,value);
+      } else {
+        savedModes.delete(start);
+      }
+      render();
+    });
+    select.disabled = hasErrors;
+    cell(tr,select);
+  }
+}
+
+
+const tapPoints = [
+  ['IN/LC','In/LC'],
+  ['<-EQ','Pre EQ'],
+  ['EQ->','Post EQ'],
+  ['PRE','Pre Fdr'],
+  ['POST','Post Fdr']
+];
+const customSendPairByChannel = {foh:new Map(),monitor:new Map()};
+
+function customSendField(monitor) {
+  return monitor ? 'monitorSendTaps' : 'fohSendTaps';
+}
+function customSendTaps(row,monitor) {
+  return row?.[customSendField(monitor)] || {};
+}
+const panFollowField = monitor => monitor ? 'monitorPanFollows' : 'fohPanFollows';
+const customPanFollows = (row,monitor) => row?.[panFollowField(monitor)] || {};
+
+function renderCustomSendMode(rows,buses,errors) {
+  if (currentStep !== 6) return;
+  const editor = byId('custom-send-rows');
+  const body = byId('custom-send-overrides');
+  editor.replaceChildren();
+  body.replaceChildren();
+  const modeByPair = new Map(buses.map(bus=>[pairStart(bus.start),bus.mode]));
+  const busLinks = busStereoStarts(buses);
+  const isStereo = pair => modeByPair.has(pair) ? busLinks.has(pair) : sceneBusLinks[(pair-1)/2] === 'ON';
+  const selectablePairs = Array.from({length:8},(_,i)=>i*2+1)
+    .filter(pair=>modeByPair.get(pair)!=='GRP' || isStereo(pair));
+  const tapPairs = selectablePairs.filter(pair=>modeByPair.get(pair)!=='GRP');
+  const busNumber = pair=>twoDigits(pair)+'–'+twoDigits(pair+1);
+  const pairName = pair=>{
+    const entry = buses.find(bus=>bus.start === pair && bus.end === pair+1);
+    if (entry) return entry.name;
+    const names = [mixBusName(buses,pair),mixBusName(buses,pair+1)].filter(Boolean);
+    if (isStereo(pair) && names.length === 2) {
+      const [left,right] = names.map(stereoSuffix);
+      if (left?.name && left.name === right?.name) return left.name;
+    }
+    return [...new Set(names)].join(' / ') || 'Tanpa nama';
+  };
+  const monitor = isMonitor();
+  const stereoStarts = plan.inputLinks;
+  const rowsByNumber = new Map(rows.map(row=>[row.ch,row]));
+  const sendSource = row => linkedInputSource(row,stereoStarts,rowsByNumber);
+  for (const row of rows) {
+    const taps = customSendTaps(sendSource(row),monitor);
+    const follows = customPanFollows(sendSource(row),monitor);
+    for (const pair of selectablePairs) {
+      const tap = modeByPair.get(pair) === 'GRP' ? undefined : taps[pair];
+      const follow = isStereo(pair) ? follows[pair] : undefined;
+      if (!tap && follow === undefined) continue;
+      const tr = body.insertRow();
+      cell(tr,'CH '+twoDigits(row.ch)+' · '+row.label);
+      cell(tr,pairName(pair));
+      cell(tr,tapPoints.find(([value])=>value===tap)?.[1] || '—');
+      cell(tr,follow === undefined ? '—' : follow ? 'ON' : 'OFF');
+    }
+  }
+  byId('custom-send-summary').hidden = !body.children.length;
+  const note = byId('custom-send-note');
+  const unavailable = !selectablePairs.length || errors.some(message=>message.startsWith('Mix Bus '));
+  note.textContent = !rows.length ? 'Tambahkan input di Edit I/O.'
+    : !selectablePairs.length ? 'Semua pasangan Mix Bus saat ini adalah subgroup mono.'
+    : unavailable ? 'Perbaiki konfigurasi Mix Bus di Edit I/O.' : '';
+  note.hidden = !note.textContent;
+  byId('custom-send-editor').hidden = !rows.length;
+
+  const selectedPairs = customSendPairByChannel[monitor ? 'monitor' : 'foh'];
+  const field = customSendField(monitor);
+  const panField = panFollowField(monitor);
+  const busOptions = selectablePairs.map(number=>[number,pairName(number)]);
+  if (tapPairs.length) busOptions.unshift(['all','All']);
+  for (const row of rows) {
+    const source = sendSource(row);
+    const key = rowKey(source);
+    const followsLeft = source !== row;
+    const linked = stereoStarts.has(pairStart(row.ch));
+    const tr = editor.insertRow();
+    const channel = 'CH '+twoDigits(row.ch);
+    const heading = document.createElement('th');
+    heading.setAttribute('scope','row');
+    heading.textContent = twoDigits(row.ch)+' '+row.label;
+    if (linked) heading.append(chainIcon());
+    tr.append(heading);
+    if (unavailable) {
+      cell(tr,'—');
+      cell(tr,'—');
+      cell(tr,'—');
+      continue;
+    }
+    const savedPair = selectedPairs.get(key);
+    const pair = busOptions.some(([value])=>value===savedPair) ? savedPair : selectablePairs[0];
+    const busCell = tr.insertCell();
+    const tapCell = tr.insertCell();
+    const followCell = tr.insertCell();
+    const showSendControls = selectedPair=>{
+      const all = selectedPair === 'all';
+      const targets = all ? tapPairs : [selectedPair];
+      const defaults = modeByPair.get(selectedPair) ?? plan.sendModes.get(selectedPair);
+      if (defaults === 'GRP') {
+        tapCell.textContent = 'Subgroup';
+      } else {
+        const defaultLabel = tapPoints.find(([value])=>value===defaults)?.[1];
+        const savedTaps = customSendTaps(source,monitor);
+        const selectedTap = savedTaps[targets[0]] ?? '';
+        const mixed = targets.some(pair=>(savedTaps[pair] ?? '')!==selectedTap);
+        const options = [['','Ikut Bus'],...tapPoints];
+        if (mixed) options.unshift(['mixed','Campur']);
+        const tap = previewSelect('Send Mode '+channel,options,mixed ? 'mixed' : selectedTap,value=>{
+          const previous = overrides.get(key);
+          const taps = {...previous?.[field]};
+          for (const pair of targets) {
+            if (value) taps[pair] = value;
+            else delete taps[pair];
+          }
+          overrides.set(key,{...previous,[field]:taps});
+          render();
+        });
+        if (mixed) tap.options[0].disabled = true;
+        if (defaultLabel) tap.title = 'Mode bus: '+defaultLabel;
+        tap.disabled = followsLeft;
+        tapCell.replaceChildren(tap);
+      }
+
+      if (all) {
+        followCell.textContent = '—';
+        return;
+      }
+      const follow = document.createElement('button');
+      const enabled = Boolean(customPanFollows(source,monitor)[selectedPair]);
+      follow.type = 'button';
+      follow.id = 'pan-follow-'+row.ch;
+      follow.className = 'pan-follow-button';
+      follow.textContent = isStereo(selectedPair) ? (enabled ? 'ON' : 'OFF') : '—';
+      if (!isStereo(selectedPair)) follow.title = 'Mix Bus mono';
+      follow.setAttribute('aria-label','Pan Follow LR '+channel+' · Bus '+busNumber(selectedPair));
+      follow.setAttribute('aria-pressed',String(enabled && isStereo(selectedPair)));
+      follow.disabled = followsLeft || !isStereo(selectedPair);
+      follow.onclick = () => {
+        const previous = overrides.get(key);
+        const follows = {...previous?.[panField],[selectedPair]:!enabled};
+        overrides.set(key,{...previous,[panField]:follows});
+        render();
+        byId(follow.id).focus({preventScroll:true});
+      };
+      followCell.replaceChildren(follow);
+    };
+    const bus = previewSelect('Mix Bus '+channel,busOptions,pair,value=>{
+      const selection = value === 'all' ? value : Number(value);
+      selectedPairs.set(key,selection);
+      if (linked) renderCustomSendMode(rows,buses,errors);
+      else showSendControls(selection);
+    });
+    bus.disabled = followsLeft;
+    busCell.append(bus);
+    showSendControls(pair);
+  }
+}
+
+function renderManualChannelLink(rows) {
+  const menu = byId('manual-channel-link');
+  const byChannel = new Map(rows.map(row=>[row.ch,row]));
+  const pairs = rows.filter(row=>row.ch % 2 === 1 && byChannel.has(row.ch+1));
+  menu.hidden = currentStep !== 3 || editingIO || !pairs.length;
+  if (menu.hidden) return;
+
+  const body = byId('manual-channel-link-rows');
+  const settings = manualInputLinks[isMonitor() ? 'monitor' : 'foh'];
+  const options = [['auto','Auto'],['on',chainSymbol],['off','Off']];
+  body.replaceChildren();
+  for (const left of pairs) {
+    const right = byChannel.get(left.ch+1);
+    const number = twoDigits(left.ch)+'–'+twoDigits(right.ch);
+    const tr = body.insertRow();
+    cell(tr,'CH '+number);
+    cell(tr,left.label+' / '+right.label);
+    const control = previewSelect('Link CH '+number,options,settings.get(left.ch) || 'auto',value=>{
+      if (value === 'auto') settings.delete(left.ch);
+      else settings.set(left.ch,value);
+      render();
+    });
+    const status = document.createElement('small');
+    status.className = 'manual-link-status';
+    if (plan.inputLinks.has(left.ch)) status.append(chainIcon());
+    else status.textContent = 'Mono';
+    cell(tr,control).append(status);
+  }
+}
+
+
+const faderSetups = {foh:{main:'-oo',bus:1},monitor:{main:'-oo',bus:1}};
+const mainFaderOptions = [['-oo','-oo'],['0.0','0 dB']];
+const sendFaderOptions = [['-oo','-oo'],['-10.0','-10 dB'],['-5.0','-5 dB'],['0.0','0 dB']];
+const faderField = monitor => monitor ? 'monitorFaders' : 'fohFaders';
+const inputFaders = (row,monitor) => row?.[faderField(monitor)] || {};
+function mixerSendBuses(buses,links = null) {
+  const configured = new Map(buses.map(bus=>[pairStart(bus.start),bus]));
+  const linked = busStereoStarts(buses);
+  const send = [];
+  for (let number=1;number<=16;number++) {
+    const start = pairStart(number);
+    const bus = configured.get(start);
+    if (bus?.mode === 'GRP') continue;
+    const index = (start-1)/2;
+    const isLinked = links ? links[index]==='ON' : bus ? linked.has(start) : sceneBusLinks[index]==='ON';
+    if (isLinked && number!==start) continue;
+    const end = isLinked ? number+1 : number;
+    const name = mixBusRangeName(buses,number,end);
+    send.push({start:number,end,name});
+  }
+  return send;
+}
+function faderButtons(parent,options,level,disabled,update,label) {
+  const group = document.createElement('div');
+  group.className = 'actions fader-preset-buttons';
+  group.setAttribute('role','group');
+  group.setAttribute('aria-label',label);
+  for (const [value,title] of options) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = title;
+    button.disabled = disabled;
+    if (level !== null) button.setAttribute('aria-pressed',String(value===level));
+    button.onclick = () => update(value);
+    group.append(button);
+  }
+  parent.append(group);
+}
+function renderFaderSet(rows,buses,errors) {
+  if (currentStep !== 7) return;
+  const monitor = isMonitor();
+  const setup = faderSetups[monitor ? 'monitor' : 'foh'];
+  const allInput = byId('all-input-fader-buttons');
+  const allSend = byId('all-send-fader-buttons');
+  const selectedBusSend = byId('selected-bus-send-buttons');
+  const main = byId('main-fader-buttons');
+  const input = byId('input-fader-rows');
+  const sends = byId('send-fader-rows');
+  const busSelect = byId('send-fader-bus');
+  for (const node of [allInput,allSend,selectedBusSend,main,input,sends,busSelect]) node.replaceChildren();
+
+  faderButtons(main,mainFaderOptions,setup.main,false,value=>{
+    setup.main=value;
+    render();
+  },'Main LR');
+  const targets = mixerSendBuses(buses);
+  const target = targets.find(bus=>bus.start===setup.bus) || targets[0];
+  for (const bus of targets) {
+    const number = twoDigits(bus.start)+(bus.end===bus.start ? '' : '–'+twoDigits(bus.end));
+    busSelect.add(new Option('Bus '+number+(bus.name ? ' · '+bus.name : ''),bus.start));
+  }
+  const busErrors = errors.some(message=>message.startsWith('Mix Bus '));
+  busSelect.disabled = !target || busErrors;
+  busSelect.value = target ? String(target.start) : '';
+  const note = byId('send-fader-note');
+  const available = rows.length && target && !busErrors;
+  note.hidden = Boolean(available);
+  note.textContent = busErrors ? 'Perbaiki konfigurasi Mix Bus di Edit I/O.'
+    : !rows.length ? 'Tambahkan input di Edit I/O.' : 'Semua Mix Bus tersedia sebagai Subgroup.';
+  byId('send-fader-editor').hidden = !available;
+  selectedBusSend.hidden = !available;
+  const field = faderField(monitor);
+  const writeFaders = (key,change) => {
+    const previous = overrides.get(key);
+    overrides.set(key,{...previous,[field]:{...previous?.[field],...change}});
+  };
+  const byChannel = new Map(rows.map(row=>[row.ch,row]));
+  const sources = rows.filter(row=>linkedInputSource(row,plan.inputLinks,byChannel) === row);
+  const bulkOptions = options=>options.map(([value,title])=>[value,'Set All '+title]);
+  faderButtons(allInput,bulkOptions(mainFaderOptions),null,!rows.length,value=>{
+    for (const row of sources) writeFaders(rowKey(row),{main:value});
+    render();
+  },'Set All fader input to LR');
+  const setAllSends = (buses,value)=>{
+    const levels = Object.fromEntries(buses.map(bus=>[bus.start,value]));
+    for (const row of sources) {
+      writeFaders(rowKey(row),{sends:{...inputFaders(row,monitor).sends,...levels}});
+    }
+    render();
+  };
+  const sendPresets = bulkOptions(sendFaderOptions);
+  faderButtons(allSend,sendPresets,null,!available,
+    value=>setAllSends(targets,value),'Set All channel to all bus');
+  if (available) {
+    const range = twoDigits(target.start)+(target.end===target.start ? '' : '–'+twoDigits(target.end));
+    faderButtons(selectedBusSend,sendPresets,null,false,
+      value=>setAllSends([target],value),'Set All send ke Bus '+range);
+  }
+  busSelect.onchange = () => {
+    setup.bus=Number(busSelect.value);
+    renderFaderSet(rows,buses,errors);
+  };
+
+  const hasBus = target && buses.some(bus=>target.start>=bus.start && target.start<=bus.end);
+  for (const row of rows) {
+    const linked = plan.inputLinks.has(pairStart(row.ch));
+    const source = linkedInputSource(row,plan.inputLinks,byChannel);
+    const key = rowKey(source);
+    const settings = inputFaders(source,monitor);
+    const save = change=>{
+      writeFaders(key,change);
+      render();
+    };
+    const channel = 'CH '+twoDigits(row.ch)+' · '+row.label;
+    const nameCell = tr=>{
+      const name = cell(tr,channel);
+      if (linked) name.append(chainIcon());
+    };
+    const inputRow = input.insertRow();
+    nameCell(inputRow);
+    faderButtons(inputRow.insertCell(),mainFaderOptions,settings.main ?? '-oo',source!==row,
+      value=>save({main:value}),channel+' fader input');
+    if (!available) continue;
+    const sendRow = sends.insertRow();
+    nameCell(sendRow);
+    faderButtons(sendRow.insertCell(),sendFaderOptions,settings.sends?.[target.start] ?? (hasBus ? '-oo' : undefined),
+      source!==row,value=>save({sends:{...settings.sends,[target.start]:value}}),channel+' send');
+  }
+}
+
+function renderWizardPlan(rows,buses,outputs,errors) {
+  renderChannelOverview(rows,buses,outputs);
+  renderManualChannelLink(rows);
+  renderRoutingEditor(rows,buses,outputs,errors);
+  renderDcaConfirmation(rows,isMonitor());
+  renderSendModeConfirmation(buses,errors);
+  renderCustomSendMode(rows,buses,errors);
+  renderFaderSet(rows,buses,errors);
+  byId('wizard-generate-summary').textContent = [isMonitor() ? 'Monitor' : 'FOH',rows.length + ' input',buses.length + ' entri Mix Bus',outputs.length + ' Output Patch'].join(' · ');
+  const needsReview = rows.filter(row=>!row.confirmed).length;
+  const issues = byId('wizard-generate-issues');
+  issues.replaceChildren(...[...errors,...(needsReview ? [needsReview + ' input perlu review. Konfirmasi di Preview.'] : []),...(!rows.length ? ['Tambahkan minimal satu input di langkah Edit.'] : [])]
+    .map(message=>Object.assign(document.createElement('li'),{textContent:message})));
+  issues.hidden = !issues.children.length;
+  const notes = byId('wizard-rider-warnings');
+  const warnings = riderResult ? [
+    ...riderResult.warnings.filter(message=>isMonitor() || !/^(?:Output|Mix Bus) · /.test(message)),
+    ...(isMonitor() ? riderResult.monitor.warnings : [])
+  ] : [];
+  notes.replaceChildren(...warnings.slice(0,24).map(message=>Object.assign(document.createElement('li'),{textContent:message})));
+  if (warnings.length > 24) notes.append(Object.assign(document.createElement('li'),{textContent:'Lihat teks PDF untuk memeriksa baris tambahan.'}));
+  notes.hidden = !warnings.length;
+}
+
+byId('wizard-io-toggle').onclick = () => {
+  editingIO = !editingIO;
+  showStep(3);
+  byId('wizard-progress').scrollIntoView?.({block:'nearest'});
+};
+
+byId('wizard-back').onclick = () => showStep(Math.max(1,currentStep-1));
+byId('wizard-next').onclick = () => {
+  if (currentStep === 1) {
+    const role = byId('mixing-role');
+    if (!role.value) {
+      byId('role-help').hidden = false;
+      role.focus();
+      return;
+    }
+    selectRole();
+  }
+  if (currentStep === 2) {
+    if (readingRider) return;
+    applyRider();
+  }
+  if (currentStep < stepTitles.length) {
+    showStep(currentStep+1);
+    byId('wizard-progress').scrollIntoView?.({block:'nearest'});
+  }
+};
+
+showStep(1);
+byId('startup-help').hidden = true;
+</script>
