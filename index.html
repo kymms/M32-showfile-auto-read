@@ -3118,6 +3118,21 @@ function extractPdfLists(pages,jobdesk='foh') {
   return {lists,monitor:monitorFromRider(pairMonitorOutputs(monitorRows),lists.bus),outputNames,warnings};
 }
 
+async function readPdfPageItems(page) {
+  // Safari can lack async iteration on the stream used by getTextContent().
+  const reader = page.streamTextContent().getReader();
+  const items = [];
+  try {
+    while (true) {
+      const {value,done} = await reader.read();
+      if (done) return items;
+      items.push(...value.items);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+}
+
 const pdfButton = byId('open-pdf');
 const pdfFile = byId('pdf-file');
 const pdfStatus = byId('pdf-status');
@@ -3154,8 +3169,7 @@ pdfFile.addEventListener('change',async () => {
     for (let number=1;number<=pdf.numPages;number++) {
       pdfStatus.textContent = 'Membaca halaman ' + number + ' dari ' + pdf.numPages + '…';
       const page = await pdf.getPage(number);
-      const text = await page.getTextContent();
-      pages.push(groupPdfText(text.items));
+      pages.push(groupPdfText(await readPdfPageItems(page)));
       page.cleanup();
     }
     if (!pages.some(lines=>lines.length)) {
